@@ -426,4 +426,235 @@
     "description": "This should probably be split into multiple problems",
     "resources": [],
   },
+],
+"resources": [
+  {
+    "id": 1,
+    "name": "DDIA",
+    "description": "",
+    "concept_coverage": {},
+    "problem_coverage": {},
+  },
+  {
+    "id": 2,
+    "name": "Alex Xu Volume I",
+    "problem_coverage": {
+        "rate_limiter": {
+            "display_string": "Alex Xu Volume I - Chapter 4 - Rate Limiter",
+        },
+        "consistent_hashing": {
+            "display_string": "Alex Xu Volume I - Chapter 5 - Consistent Hashing",
+        },
+        "key_value_store": {
+            "display_string": "Alex Xu Volume I - Chapter 6 - Key-Value Store",
+        },
+        "uuid_generator": {
+            "display_string": "Alex Xu Volume I - Chapter 7 - Unique ID Generation",
+        },
+        "tiny_url": {
+            "display_string": "Alex Xu Volume I - Chapter 8 - URL Shortener",
+        },
+        "web_crawler": {
+            "display_string": "Alex Xu Volume I - Chapter 9 - Web Crawler",
+        },
+        "notification_service": {
+            "display_string": "Alex Xu Volume I - Chapter 10 - Notification System",
+        },
+        "newsfeed": {
+            "display_string": "Alex Xu Volume I - Chapter 11 - News Feed System",
+        },
+        "chat_app": {
+            "display_string": "Alex Xu Volume I - Chapter 12 - Chat System",
+        },
+        "auto_suggest": {
+            "display_string": "Alex Xu Volume I - Chapter 13 - Search Autocomplete System",
+        },
+        "youtube": {
+            "display_string": "Alex Xu Volume I - Chapter 14 - YouTube",
+        },
+        "file_storage": {
+            "display_string": "Alex Xu Volume I - Chapter 15 - Google Drive",
+        },
+    },
+  },
+  {
+    "id": 3,
+    "name": "Alex Xu Volume II",
+    "problem_coverage": {
+        "yelp": {
+            "display_string": "Alex Xu Volume II - Chapter 1 - Proximity Service",
+        },
+        "yelp": {
+            "display_string": "Alex Xu Volume II - Chapter 2 - Nearby Friends",
+        },
+        "google_maps": {
+            "display_string": "Alex Xu Volume II - Chapter 3 - Google Maps",
+        },
+        "message_broker": {
+            "display_string": "Alex Xu Volume II - Chapter 4 - Distributed Message Queue",
+        },
+        "metrics_service": {
+            "display_string": "Alex Xu Volume II - Chapter 5 - Metrics Monitoring and Alerting System",
+        },
+        "ad_click": {
+            "display_string": "Alex Xu Volume II - Chapter 6 - Ad Click Event Aggregation",
+        },
+        "hotel_reservation": {
+            "display_string": "Alex Xu Volume II - Chapter 7 - Hotel Reservation System",
+        },
+        "email": {
+            "display_string": "Alex Xu Volume II - Chapter 8 - Distributed Email Service",
+        },
+        "file_storage": {
+            "display_string": "Alex Xu Volume II - Chapter 9 - S3-like Object Storage",
+        },
+        "leaderboard": {
+            "display_string": "Alex Xu Volume II - Chapter 10 - Real-time Gaming Leaderboard",
+        },
+        "payment_system": {
+            "display_string": "Alex Xu Volume II - Chapter 11 - Payment System",
+        },
+        "digital_wallet": {
+            "display_string": "Alex Xu Volume II - Chapter 12 - Digital Wallet",
+        },
+        "stock_exchange": {
+            "display_string": "Alex Xu Volume II - Chapter 13 - Stock Exchange",
+        },
+    },
+  },
+  {
+    "id": 4,
+    "name": "Grokking the System Design Interview",
+    "problem_coverage": {
+        "tiny_url": {
+            "display_string": "TinyURL",
+        },
+        "pastebin": {
+            "display_string": "Pastebin",
+        },
+        "instagram": {
+            "display_string": "Instagram",
+        },
+        "file_storage": {
+            "display_string": "Dropbox",
+        },
+        "chat_app": {
+            "display_string": "Facebook Messenger",
+        },
+        "newsfeed": {
+            "display_string": "Twitter Timeline",
+        },
+        "youtube": {
+            "display_string": "YouTube / Netflix",
+        },
+        "auto_suggest": {
+            "display_string": "Typeahead",
+        },
+        "rate_limiter": {
+            "display_string": "Rate Limiter",
+        },
+        "post_search": {
+            "display_string": "Twitter Search",
+        },
+        "web_crawler": {
+            "display_string": "Web Crawler",
+        },
+        "newsfeed": {
+            "display_string": "Facebook Newsfeed",
+        },
+        "yelp": {
+            "display_string": "Yelp / Nearby Friends",
+        },
+        "uber": {
+            "display_string": "Uber Backend",
+        },
+        "movie_ticketing": {
+            "display_string": "TicketMaster",
+            "notes": "This keeps the scale restricted so that it doesn't have to cover distributed transactions, which is pretty disappointing."
+        },
+    },
+  },
+  {
+    "id": 5,
+    "name": "Exponent",
+    "problem_coverage": {
+        "instagram": {
+            "display_string": "instagram",
+        },
+        "newsfeed": {
+            "display_string": "Twitter API",
+        },
+        "chat_app": {
+            "display_string": "Facebook Messenger",
+        },
+        "tiktok": {
+            "display_string": "TikTok",
+        },
+        "parking": {
+            "display_string": "Parking Garage",
+        },
+        "reddit": {
+            "display_string": "Reddit",
+        },
+        "youtube": {
+            "display_string": "YouTube",
+        },
+        "calendar": {
+            "display_string": "Calendar App",
+        },
+        "youtube": {
+            "display_string": "Netflix",
+        },
+        "newsfeed": {
+            "display_string": "Twitter",
+        },
+        "web_crawler": {
+            "display_string": "Web Crawler",
+        },
+        "metrics_service": {
+            "display_string": "Analytics Platform (Metrics & Logging)",
+        },
+        "chat_app": {
+            "display_string": "WhatsApp",
+        },
+        "vending_machines": {
+            "display_string": "Vending Machine",
+        },
+    },
+  },
+  {
+    "id": 6,
+    "name": "interviewing.io",
+    "problem_coverage": {
+        "chat_app": {
+            "display_string": "WhatsApp",
+        },
+        "coding_competition": {
+            "display_string": "Online Judge",
+        },
+        "coding_competition": {
+            "display_string": "Leetcode",
+        },
+        "uuid_generator": {
+            "display_string": "Unique ID Generation",
+        },
+    },
+  },
+  {
+    "id": 7,
+    "name": "Dropbox Engineering Blog",
+    "problem_coverage": {
+        "job_scheduler": {
+            "display_string": "Dropbox Engineering Blog - How we designed Dropbox ATF: an async task framework",
+            "link": "https://dropbox.tech/infrastructure/asynchronous-task-scheduling-at-dropbox",
+        }
+    },
+  },
+  {
+    "id": 8,
+    "name": "Whitepapers",
+    // stuff like the GFS whitepaper will be applicable to problems like designing S3 or Dropbox
+    "problem_coverage": {
+    },
+  },
 ]
