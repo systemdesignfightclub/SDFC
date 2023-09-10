@@ -1,0 +1,126 @@
+
+
+
+DESIGN AN APP STORE
+
+
+
+RESOURCES:
+- for handling and processing large files (examples of large file processing pipelines):
+    - Best examples:
+        - Dropbox / Google Drive
+        - YouTube
+    - Maybe:
+        - Web Crawler
+        - Coding Competition Platform
+- For celebrity distribution of access on a large file store
+    - instagram
+    - YouTube
+
+
+
+
+REQUIREMENTS:
+- users can download an app
+    - there will be a celebrity distribution to popularity of apps
+- app creators can upload an app
+- apps will be checked for containing malware
+- apps can have updates
+    - there will be a celebrity distribution to popularity of apps
+    - let's say that the majority of DAU is updated within one week of every new app version
+
+
+
+NUMBERS:
+- downloads
+    - TikTok is one of the fastest apps to hit 100M users, doing so within 9 months
+    - TikTok is currently 340 MB on Apple's App Store
+- updates
+    - TikTok
+        - 15M DAU
+        - 340MB file size
+    - Instagram
+        - 2.0B MAU, 1.3B DAU
+        - 240MB file size
+
+
+
+Download pace:
+
+TikTok hit 100M users in 9 months
+-> ~366.3k users / day
+-> 3-4 users / second
+    * 340MB file
+-> ~1GB / second
+
+This can be handled with just some replication of S3 buckets.
+
+
+
+Update pace:
+
+100k seconds/day -> 700k seconds per week
+Instagram has 1.3B DAU
+-> 1300M users updated in 0.7M seconds
+-> ~1857 updates per second
+File size is 240 MB (round to 0.25GB)
+-> 1857 TPS * 0.25GB
+-> ~464GB / second
+
+This probably is a bit intensive for regular object stores.
+Might want to use a CDN for these most popular apps.
+(Let's do a push-based CDN...)
+
+
+
+
+--------------------
+
+
+
+For metadata replication, two approaches:
+1) task runner handles replication only under relevant CDC events (currently shown)
+2) alternatively use built-in leader-follower replication and just replicate all updates to all the followers
+
+
+
+
+
+For updates, two approaches:
+1) push style updates
+2) pull style updates
+
+
+
+
+
+
+
+--------------------
+LIVE DISCUSSION QUESTIONS:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

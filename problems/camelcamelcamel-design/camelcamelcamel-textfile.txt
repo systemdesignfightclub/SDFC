@@ -1,0 +1,170 @@
+
+
+
+DESIGN A PRICE TRACKER LIKE CAMELCAMELCAMEL.COM
+
+
+
+RESOURCES:
+- taken from somebody's real meta system design interview
+
+
+
+
+
+REQUIREMENTS:
+- users can subscribe to watching for a price drop to below a certain "price threshold"
+- users will receive an email notification when the price drop occurs
+- price history (if we have time!)
+
+
+- adaptive price change scanner intervals
+
+
+
+
+
+
+--------------------
+
+
+
+
+Won’t the db be overhauled by the CDC? There are like million stocks out there and you need to track price for each one of them every sec?
+
+
+
+
+should we use consistent hashing (for key range query)? Maybe Cassandra? 
+As this seems quite write heavy (for every update we are writing in our DB and updates can be huge)
+
+
+
+
+You don’t do CH for key-range
+If the read volume is really, really low, you can get away with this
+
+
+
+
+
+
+User ID as the sort key seems wasteful if you're querying by price threshold, the DB needs to filter based on price so that field should be sorted
+
+
+
+
+
+
+
+
+
+
+so how are you storing in the Price Watch DB would it update the existing price or would it add a new entry?
+If you will add a new entry LSM trees are good, if you will update (searching has to be fast so we'll need some good indexing)
+
+
+
+How does price drop notifiers get triggered?
+
+
+
+
+
+
+For the same product, do we need multiple entries per user in price watch DB? Why not store user to price relation in separate DB.
+
+
+
+
+
+
+
+Sort key -> time-stamp? (As we’re tracking last 2-3 prices?)
+
+
+
+
+
+
+Say the scrapers fail to update the status of the items in the Product Price DB, how do you deal with items in the DDB with PENDING_SCRAPE that have already been scraped?
+
+
+
+
+
+
+
+What's the mechanism for ensuring that recipients are not receiving duplicate alerts?
+
+For delivery, it's either at least once, or at most once
+
+But, for de-duplication on client side, you can do something similar to "auth-capture workflow" -- Stripe's documentation
+
+
+
+
+
+
+
+
+
+--------------------
+
+
+
+
+
+millions of products, updated @ once per day
+
+100k seconds in a day
+
+
+1M products at once per day
+-> 10 TPS
+
+
+
+
+
+10M products at once per day
+-> 100 TPS
+
+
+
+
+
+10M products at 10 times per day
+-> 1000 TPS
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
