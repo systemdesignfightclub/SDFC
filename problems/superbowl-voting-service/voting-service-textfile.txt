@@ -1,0 +1,102 @@
+
+
+
+
+SUPERBOWL VOTING SERVICE
+
+
+
+
+RESOURCES:
+- Alex Xu Volume II - "Ad Click Aggregator"
+- DDIA - "Conflict-Free Replicated Data Type"
+- Understanding Distributed Systems by Roberto Vitillo
+
+
+REQUIREMENTS:
+- a live voting system, like the one in super bowls, where you can vote for 2 teams
+- handle duplicate voting without the users logging in
+- display results in real-time, with the idea of eventual consistency
+- real-time results could also shown on the webpage for the users
+
+OUT-OF-SCOPE:
+- web sockets for live updating number
+
+
+
+
+
+CONSTRAINTS:
+- You can't change your vote
+- Close-ended (time bound) vs. open-ended poll
+
+
+
+How much do we care about "integrity" of the vote?
+What's the degree of "real-time"-ness?
+
+
+
+
+
+APPROACHES:
+- CRDTs with redis (Riak, Cosmos DB)
+- sharded counter
+- flink
+- aggregation (non-real time)
+
+
+
+
+
+
+NUMBERS:
+- 100M people watch the superbowl
+- let's assume 10% complete a poll that is shown
+- let's assume that the poll request is shown at the start of a commercial break, and the results of the poll are shown at the end of the commercial break, with the break coming in at around 5 minutes long (300 seconds)
+- real-time results could also shown on the webpage for the users
+- Also, peak voting volume is 5X the average rate
+
+So, that comes out to:
+- 100M * 10% = 10M votes
+- at 300 seconds for those 10M votes to occur, it's 33,000 TPS for vote writes
+- the peak of 5X would be ~165,000 TPS for those write operations
+
+165
+1000
+
+
+
+
+
+
+this is a good video for approximate algos too: https://www.youtube.com/watch?v=lzHC8NQD3jQ
+
+tl;dw: hashing and sketching, hyperloglog, count min sketch, streaming k means, quantiles via t-digest (summary at 13:15)
+
+
+
+
+
+
+
+
+
+
+Realtime piece of this problem looks similar  to a heavy hitters problem working with these count min sketch algos.. and we can have a fast and slow streaming pipeline .. slow one to show the results in the end..
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

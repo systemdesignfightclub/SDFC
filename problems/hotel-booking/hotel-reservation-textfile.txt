@@ -1,0 +1,133 @@
+
+
+
+HOTEL RESERVATION
+
+
+
+RESOURCES:
+  - "Ticketmaster" in grokking
+  - "Hotel Reservation" in Alex Xu Book II
+  - "Digital Wallet" in Alex Xu Book II
+    - includes a chunk about Raft
+  - If you want to really dive deep:
+    - Spanner whitepaper: https://notes.stephenholiday.com/Spanner.pdf
+    - Chubby whitepaper: https://research.google/pubs/pub27897/
+    - Raft whitepaper: https://notes.stephenholiday.com/Raft.pdf
+  - other similar problems:
+    - airline ticketing
+    - movie ticketing
+    - "design amazon.com"
+    - "design airbnb"
+
+CALL OUTS:
+  - This problem seems to be commonly asked by Square
+  - 2PC, distributed commits, sagas, thread contention
+    - some resources just cop out and use PostgreSQL and one machine
+
+
+FUNCTIONAL REQUIREMENTS:
+- Customers can view available rooms
+- Customers can make a reservation
+- The front desk people have reservation info for checking people in
+- preventing double-booking vs. 10% over-booking
+  - Alex Xu designed this for 10% overbooking
+  - double-booking / over-booking is actually illegal in the airline industry
+
+
+
+NON-FUNCTIONAL REQUIREMENTS:
+- High Consistency; no stale data here.
+
+
+
+OUT-OF-SCOPE:
+- Dynamic Pricing
+- The rest of how the check in process works for when you actually arrive
+- external payment processing service (stripe/paypal/visa/mastercard)
+
+
+
+
+NUMBERS:
+- 3B page views per month
+- 30M reservations per month
+
+100:1
+read:write ratio
+"clickthrough rate" of 1%
+
+
+
+
+how many reads per second?
+
+3B reads per month
+
+3B / 30 -> reads per day
+
+3000M / 30
+1000M / 10
+100M reads per day
+
+100M / 100k -> reads per second
+1M / 1k
+
+1,000 reads per second
+
+
+
+
+
+how many writes per second?
+30M per month
+30M / 30
+1M writes per day
+
+1M / 100k
+
+10 TPS
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

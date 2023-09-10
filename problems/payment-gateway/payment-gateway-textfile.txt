@@ -1,0 +1,78 @@
+
+
+
+PAYMENT GATEWAY
+
+
+RESOURCES:
+- Alex Xu Volume 2
+    - Payment System chapter
+- Tech Granth - "Payment Gateway System Design | Payment Processing | System Design"
+    - https://youtu.be/NxjGFIgFCbg
+- Think Software - "Introduction to Payment Gateway System Design | Design Payment System | Stripe Product Design"
+    - https://youtu.be/_hfPnViI_N8
+- Guarav Sen & sudoCODE - "UPI System Design Mock Interview"
+    - https://youtu.be/QpLy0_c_RXk
+- Coding with Irtiza - "Introduction to Payment Systems | System Design"
+    - https://youtu.be/zsD4R_aQctw
+- Reach Goals - "System design interview - How online payment works using QR code?"
+    - https://youtu.be/rdJIM3jcICE
+- Exponent - "System Design Interview: Design Amazon Kindle Payments"
+    - https://youtu.be/til92X5hYAY
+
+
+EXAMPLES:
+- Stripe
+- Paypal
+
+
+
+REQUIREMENTS:
+- idempotent interface (auth-capture workflow)
+- accepts payments
+
+
+
+
+
+Auth Flow:
+- give an idempotency key
+
+
+Capture Flow:
+- you actually execute the charge, given the idempotency key
+
+
+
+
+
+NUMBERS:
+- 1B payments per day
+
+
+How many payments per second?
+
+1B / 100k -> 10k
+10k payments per second
+
+
+
+
+DynamoDB with Strong Read Consistency
+Manually sharded PostgreSQL
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

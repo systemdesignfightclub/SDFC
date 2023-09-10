@@ -1,0 +1,160 @@
+
+
+
+
+
+
+DESIGN A SEARCH ENGINE
+
+RESOURCES:
+- Alex Xu book I covers this
+- Grokking covers this
+- "Elements of Programming Interviews" covers this (briefly)
+- Pregel whitepaper: http://notes.stephenholiday.com/Pregel.pdf
+- DDIA batch processing chapter
+
+
+FUNCTIONAL REQUIREMENTS:
+- scrape links and webpages from the internet
+- present link recommendations when users provide some text input
+
+NON-FUNCTIONAL REQUIREMENTS:
+- High availability; it's okay for the results to be a little stale
+
+
+OUT OF SCOPE:
+- auto-complete
+- analytics on the queries themselves ("click-through rates" for the results)
+- robots.txt
+- "politeness"
+
+
+
+NUMBERS:
+- 20B webpages
+- 3B pages crawled per month
+- 2B DAU with avg of 5 queries per day
+- 100kB per webpage
+- 100 avg chars per URL (max is 2048)
+
+
+
+
+
+what's our write rate going to be?
+3B pages per month
+3B / 30 -> pages recorded per day
+100M per day
+100M / 100k -> writes per second
+1M / 1k
+
+1k writes per second
+
+
+
+
+
+
+
+
+what's our read rate going to be?
+
+2B DAU * 5 -> number of queries per day
+10B queries per day
+10B / 100k -> number of queries per second
+
+100M / 1k
+
+100k queries per second
+
+
+
+
+
+
+
+what bandwidth will we need? (on the crawler)
+
+1k writes per second
+100kB per webpage
+
+100kB * 1k
+100MB per second
+
+0.1 GBps
+0.8 Gbps
+
+
+EC2 m5 -> 0.75 - 2.5 Gbps
+
+1-2 machines
+
+
+
+
+
+how much storage do we need for all those webpages?
+
+20B webpages
+100kB each
+
+
+20B * 100kB
+2000B kB
+
+2B MB
+2M GB
+2k TB
+
+2 PB
+
+2 TB - 100TB per HDD
+->
+20 - 1000 HDDs
+
+
+
+
+
+
+
+
+
+
+
+10 URLs per request
+each URL is 100 bytes
+0.1kB
+
+
+each request is 1kB
+
+100k requests per second @ 1kB each
+
+100k * 1kB
+
+100 1MB
+100MB
+
+0.1 GB
+0.8 Gbps
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,69 @@
+
+
+
+ONLINE AUCTION
+
+
+
+
+
+RESOURCES:
+- similar to ad click aggregator from Alex Xu's book
+
+
+
+REQUIREMENTS:
+- allow items to be auctioned
+- take bids
+- 2 variations
+    - fixed auction deadline
+    - auction deadline is 60 minutes after the final bid
+
+
+NUMBERS:
+- 10M items per day
+- 1B bids per day
+
+
+
+how many items added per second?
+
+10M / 100k -> 100 items per second
+
+
+
+
+
+how many bids per second?
+
+1B / 100k -> 10,000 bids per second
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
