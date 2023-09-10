@@ -1,0 +1,262 @@
+
+
+
+DISTRIBUTED LINKED LIST
+
+
+
+RESOURCES:
+- taken from somebody's real google system design interview
+
+
+
+
+REQUIREMENTS:
+- distributed, doubly linked list
+- 100k QPS for read & write
+- heavy on insertions, low on deletions
+- billions of nodes
+- the list will NOT fit on one machine (meaning, one leader with a bunch of read replicas won't work)
+
+
+NUMBERS:
+- 100k QPS for read & write
+- billions of nodes
+
+
+
+ASSUMPTIONS:
+- this will only be handling values of an "INT", generalized data types for node values will be out-of-scope
+
+
+
+OPEN QUESTIONS:
+- celebrity issue to the distribution of writes?
+- "fairness"
+- Is it a write or read heavy?
+    - I am assuming it's even
+- are the reads giving "real-time" results?
+
+
+
+
+
+
+
+
+variation 1:
+writes aren't primarily on the ends
+    - no need to worry about write conflicts
+
+variation 2:
+writes ARE primarily on the ends
+    - write conflicts / total ordering is an issue
+
+
+
+
+
+1B records
+100k writes
+
+
+1000M
+/ 0.1M
+
+10k seconds between writes touching the same record
+5k
+
+
+
+
+
+SCHEMA APPROACHES:
+-----
+
+
+APPROACH 1:
+Node table:
+{
+    uuid: defabc-123-defabc
+    value: 7
+    next: cccddd-234-eeefff
+    prev: eeefff-456-fffaaa
+}
+
+APPROACH 2:
+Node table:
+{
+    uuid: defabc-123-defabc
+    value: 7
+    hybrid-clock-timestamp: 1670005000_5
+}
+(determine the next node off of a key-range query, utilizing the lamport timestamps)
+
+
+
+
+
+
+HLD APPROACHES:
+-----
+
+
+
+APPROACH 1
+- there's actually a CRDT for lists, which is used for google docs (a document is treated as a single long list of characters)
+    - since the data structure is too large for a single node, this is likely not a viable approach
+
+
+APPROACH 2
+- redis sortedset (from leaderboard) would actually probably work really well here
+- "Dynomite" from Netflix could possibly be used for replication, but that would probably kill transactions capability by giving it eventual consistency
+- potentially viable for variation 1, but not variation 2
+
+
+
+
+
+APPROACH 3.1
+- each node is a record, and you update multiple nodes with a transaction
+    - lock current and next for a mid-chain node
+- potentially viable for variation 1, but not variation 2
+
+-> transactions approach
+{
+    uuid: defabc-123-defabc
+    value: 7
+    next: cccddd-234-eeefff
+    prev: eeefff-456-fffaaa
+}
+
+
+
+
+APPROACH 3.2
+
+-> lamport timestamps approach, no transactions
+{
+    uuid: defabc-123-defabc
+    value: 7
+    lamport-timestamp: 1670005000_5
+}
+
+Disadvantage:
+- clock drift would mean "fairness" is treated less properly
+
+
+
+
+
+APPROACH 4
+- are streams a distributed linked list?
+- problably not, but:
+- could build a whole chain of 20-100 nodes and connect them later?
+
+
+
+APPROACH 5
+- async "command queue" of reads and writes (you asynchronously get your read results too)
+
+
+
+APPROACH 6:
+"consistent hashing"/"Chord" approach
+
+
+
+
+
+
+
+10k messages per read & a TPS of 5 for reads (per shard)
+
+
+
+caching of the ends of the queues for GETs under variation 1?
+
+
+
+
+
+
+-----
+
+
+
+
+Is it a write or read heavy?
+that was left open, I'm assuming even
+
+
+
+
+is it sorted based on insertion time?
+"fairness" is important here
+for addFront() vs list.add(123700, new Node())
+addFront() would be based on insertion timestamp
+
+
+
+Can you have a dht with consistent hashing kind of strategy implementation? Each vnode stores a subset of nodes that are double linked list. Data is hashed
+
+
+
+
+
+How come Lampert over vector clocks.
+I meant hybrid clock (monotonic clock + lamport timestamp to resolve timestamp collisions)
+
+
+
+
+
+
+To avoid conflicts, is it possible to use proof-of-work like blockchains? The service communicates the last node in the LL to all clients. Individual clients try to "mine" a new node and then submit their own node
+The low number of transactions is due to the high difficulty in mining, mining can take as low as 5 seconds
+
+100k QPS for read & write is a "requirement"
+
+"constraints" -- usually requires coordination
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
