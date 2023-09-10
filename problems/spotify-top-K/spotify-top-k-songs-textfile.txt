@@ -1,0 +1,191 @@
+
+
+
+SPOTIFY TOP K SONGS
+
+
+
+RESOURCES
+- Stanley Chiang -- chapter on "most frequently accessed items tracker"
+- Donne Martin's primer kinda covers it as "sales rank" -- https://github.com/donnemartin/system-design-primer/tree/master/solutions/system_design/sales_rank
+- Alex Xu Volume II -- Ad Click Aggregator / Metrics Monitoring
+- The coverage from the "System Design Interview" youtube channel (Mikhail Smarshchok): https://www.youtube.com/watch?v=kx-XDoPjoHw
+
+
+
+
+
+
+
+
+REQUIREMENTS
+- show the K most played songs in the past 24 hours with *REAL-TIME* updates
+- record and count the songs as they're being played by end users
+- we don't need an exact count for top songs
+
+
+
+
+
+
+
+
+
+
+
+CHECKLIST:
+- [ ] load balancers
+- [ ] CDNs?
+- [ ] secondary indices?
+- [ ] DB schemas
+- [ ] partitioning keys, secondary indices
+- [ ] NALSD numbers (return to this at end)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--------------------
+LIVE DISCUSSION QUESTIONS:
+
+
+
+
+
+
+What is cdc with database triggers - how does it work to send from OLTP to OLAP?
+
+
+"Change Data Capture"
+DDIA has some content on it
+"Source of Truth" / "System of Record" -- the initial place where data is captured
+"read optimized views"
+
+debezium
+
+
+
+
+
+
+
+
+
+Will we be doing estimates on total number of servers ? and also total number of DB instances? ..
+
+
+100k songs played per second
+
+batch up 10 songs at a time in the logs
+
+10k writes per second
+
+NA/SA, europe, asia+australia
+
+
+
+5k
+
+
+
+
+
+
+
+1k TPS for listing service
+
+
+
+
+
+
+2k transactions per machine on cassandra
+10k writes per second, 10 records per write
+
+4k-5k writes at peak
+
+N=3
+
+N+1 is 4 machines
+
+
+
+
+
+
+
+
+
+
+
+
+If top K songs are personalised per user, bringing in more parameters like user's previous listens, etc, can we talk about how and where to club all data in "most optimal" approach ?
+
+"personalization" is an MLE topic
+- Kang Pham
+- Alex Xu's new ML System Design book
+- Chip Huyen
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

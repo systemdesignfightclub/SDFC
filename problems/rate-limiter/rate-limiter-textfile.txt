@@ -1,0 +1,299 @@
+
+
+
+RATE LIMITER
+
+
+
+RESOURCES
+- Alex Xu Volume I
+- Grokking
+- Stanley Chiang's book
+
+
+
+REQUIREMENTS
+- limit the user to a certain number of actions within a timeframe
+- purpose:
+    - DDoS attacks protection
+    - a single IP can create 5 accounts per day (grokking)
+    - a user can only send one message per second (spam protection; grokking)
+    - throttle downstream services in order to encourage caching (Stanley Chiang, Grokking)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+APPROACH:
+
+
+- standalone service vs. per-machine
+- user-level vs. IP-level
+- fixed window, sliding window, "leaky bucket"
+    - I might just understand leaky bucket wrong, but I think I'm not a fan
+- exact number vs. soft number (CRDT & per-machine basis vs. standalone, sharded service)
+
+
+
+
+
+
+business rules engine for client-specific limits
+
+
+
+
+
+
+
+
+
+CHECKLIST:
+- [ ] load balancers
+- [ ] CDNs?
+- [ ] secondary indices?
+- [ ] DB schemas
+- [ ] partitioning keys, secondary indices
+- [ ] NALSD numbers (return to this at end)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--------------------
+LIVE DISCUSSION QUESTIONS:
+
+
+
+
+
+
+
+Which problem orders would you suggest to follow in case done with DDIA?
+
+
+apart from DDIA and system design books by alex xu , grokking and stanley chiang anything else you use to prepare for system design like medium blogs etc..
+
+
+
+
+
+
+
+
+
+
+
+for anyone else wondering, CRDT is short for Conflict-free Replicated Data Type
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+YubiDesu
+
+1670005000
+1670000000
+
+
+
+YubiDesu_1670000000: 3
+YubiDesu_1670000000: 5
+
+
+
+
+YubiDesu_1670100000: 1
+
+
+
+
+
+
+
+
+
+what are pros and cons of having rate limiter at different backend service (picture 1) vs having common rate limiter?
+latency
+vs
+precision/accuracy / "fairness"
+
+
+
+
+
+
+
+
+
+The IP approach can be problematic if 2 or more users working in the same local network, I think the user ID will be better ? what is your thoughts on this ?
+
+user
+user
+
+
+
+
+
+
+
+
+
+The cons in the first pic is you should also maintain the count accross the instances, right ?
+
+
+
+
+
+
+is there way to get actual IP? I remember reading due to NAT usually ISP does not provide actual IP of user, but IP of ISP with different socket
+
+
+
+
+
+
+
+Also any approximate number you've in mind if redis used for storage vs DDB
+
+
+
+
+
+
+Is the backend service the API we are trying to rate limit? I was wondering if we want to call it before rate limiting; in Alex Xu’s example I think he calls the rate limiter middleware before the api. Also can you explain difference in usage between Redis and DynamoDB?
+
+- throttle downstream services in order to encourage caching (Stanley Chiang, Grokking)
+
+See Alex Xu Volume II -> Gaming Leaderboard chapter for how to do redis sorted set
+
+
+
+
+
+where are we storing rate limiting rules ?
+
+Config file
+another local redis store
+
+business rules engine
+Drools
+
+
+
+
+yep, 429: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429
+
+
+
+
+
+
+1) Read current count
+2) update the count / write a new record
+
+
+
+
+
+
+
+
+
+
+What about some real life optimizations like Request collapsing or Client-Side Rate Limiting?
+
+
+
+
+Request collapsing - When multiple clients are asking for the same thing. Instead of computing and sending the response
+e store the request in the cache itself. We then combine all the requests and send only one request to the server and then use the response for satisfying all the pending requests.
+
+
+
+
+
+
+
+
+qq what is difference between upstream and downstream service calls?
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

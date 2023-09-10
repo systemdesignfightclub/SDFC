@@ -1,0 +1,304 @@
+
+
+
+ORCHESTRATION
+
+
+
+RESOURCES
+- Real google interview question
+- Netflix Conductor documentation is phenomenal.
+- orchestration
+    - Conductor (from Netflix)
+    - Apache Airflow (from Airbnb)
+    - AWS step functions
+    - AWS SWF ("simple workflow service")
+    - Azkaban (from LinkedIn)
+    - Luigi (from Spotify)
+    - Apache Oozie
+- task queue
+    - Celery
+
+
+
+REQUIREMENTS
+- "design a service to execute several tasks consisting of a million or more steps each"
+- tasks are fully independent of each other
+- steps can be either parallelized or dependent upon eachother
+
+
+
+
+
+- 1 minute to run a "step"
+
+
+
+
+
+
+
+
+
+
+
+
+CHECKLIST:
+- [ ] load balancers
+- [ ] CDNs?
+- [ ] secondary indices?
+- [ ] DB schemas
+- [ ] partitioning keys, secondary indices
+- [ ] NALSD numbers (return to this at end)
+
+
+
+
+
+
+
+
+
+
+SCALING:
+
+
+
+5 tasks to run
+2 million steps each
+
+
+10 million steps that we want to run
+
+
+8 threads per CPU
+
+
+
+on a single machine,
+10m / 8 (round 8 -> 10)
+
+1m steps per machine
+
+
+
+if we only have 1 machine,
+1 million minutes to run the 5 tasks
+16,670 hours
+= 694 days
+
+
+if we want to get 5 tasks done per day,
+we need 694 machines.
+
+
+
+
+how many steps getting thrown down the broker at a time then?
+694 machines
+8 cores each
+
+
+694*8 steps per minute
+694*8 per minute
+5552 steps per minute
+
+~100 steps per second
+
+So, I think RabbitMQ can handle our traffic volume.
+
+
+
+
+
+
+
+
+
+
+
+10M
+
+1KB of output per step
+
+
+
+how much storage for 1 day?
+
+
+
+10M * 1 KB
+
+10k 1 MB
+
+10 * 1 GB
+
+
+10 GB per day
+
+
+
+1 year?
+
+10GB * 365
+= 3650GB per year
+= 3.5 TB per year
+
+2 HDD
+6 HDDs
+
+
+
+how much storage do we need to run this for 5 years
+
+3.5 TB * 5
+17.5 TB
+
+
+60 TB
+
+30 HDDs
+
+10 machines for storage
+(3 HDDs per machine)
+
+
+
+
+
+
+bandwidth bottleneck?
+
+
+100 TPS of steps
+1KB per step
+
+
+100KB
+
+0.1 MB
+0.8 Mbps
+
+
+
+
+
+
+--------------------
+LIVE DISCUSSION QUESTIONS:
+
+
+
+
+
+
+
+
+
+
+
+What is the similarity between orchestration and Job Scheduler
+A single AWS "step" in step functions is a "AWS lambda function"
+
+
+
+Are the tasks sequential or can they be parallelized?
+
+
+
+
+
+
+We should design some DSL to take the input and output of the tasks. right?
+"AWS Steps Language"
+
+
+- describing the steps and their relationship to each other
+- kicking off a task
+
+
+
+
+What other task queue workers can you use instead of celery? Why choose celery over any other ones?
+
+
+
+
+Can you explain the schema for the DAG datastore?
+
+
+
+Ok thank you Can you use lambda functions instead of celery? 
+- Herd
+    - SILFunction (Lambda + API call)
+- AWS Step Functions
+
+
+
+
+I missed which type of Broker you are using in-memory or Log-based ?
+
+RabbitMQ for once.
+
+
+
+
+if in-memory is used how do you handle dependent task executing out of order?if log-based is used how do you handle a failed task , ( other subsequent/following task will be blocked until that) 
+
+
+when a step completes execution by the workers,
+get all of it's child steps
+
+check whether each child step is now able to execute (due to all parents being in a state of COMPLETE)
+
+
+
+
+
+should we add status of a task to schema ?
+
+
+
+
+
+Can you elaborate the semantics of task_instance_id? 
+
+
+
+
+
+
+For the schema, how are we querying from the DB and ensuring we are doing tasks in the right order?
+
+
+
+
+Sorry could you just briefly go o ver difference between dag data store/dag instance data store?
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
