@@ -1,0 +1,256 @@
+
+
+
+PASTEBIN
+
+
+
+
+RESOURCES
+- only Grokking covers this out of my 4 books
+
+
+
+
+REQUIREMENTS
+- users can upload text
+- users can view uploaded text
+- FOLLOW UP: text search
+
+
+OUT OF SCOPE:
+- hit counter
+- user account system
+
+
+
+
+
+NUMBERS:
+- 1 million pastes per day
+- 10MB max paste upload size (10KB average)
+- 5:1 read:write ratio
+- permanent storage supported (no expiration)
+
+
+
+write TPS?
+10 writes per second
+
+read TPS?
+50 reads per second
+
+read bandwidth?
+50*10KB = 500KB
+= 0.5MB per second
+
+
+
+per day storage requirement
+1M at 10KB
+10GB per day
+
+per year storage requirement
+3,650 GB per year
+3.65 TB per year
+
+
+for 10 years, permanent storage
+36.5 TB
+
+
+
+
+with 2 replicas for redundancy,
+3 HDDs on 3 separate machines
+
+
+
+
+10,000X scale
+---
+100,000 writes per second
+500,000 reads per second
+
+0.5MB per second*10,000
+5MB * 1000
+5,000MB
+5GB bandwidth per second
+40 Gb bandwidth per second (for reads)
+
+4 EC2 instances
+
+
+
+1GB bandwidth per second
+8 Gb bandwidth per second (for reads)
+
+
+
+
+
+
+
+
+
+
+
+
+
+NEXT:
+LATENCY
+
+
+
+1) latency
+2) search
+3) caching with a TTL of the text
+
+
+
+
+p50
+p99
+
+
+
+
+
+
+
+
+
+
+
+--------------------
+LIVE DISCUSSION QUESTIONS:
+
+
+
+
+
+
+
+btw why are we having 2 text stores? Just to know more can we not do it with anyone of them
+
+
+
+
+
+how we do user_id to paste_id mapping?
+
+
+
+
+
+
+Are there chances of hot partitions ? How to handle hot partition issue in this case ?
+avoid partitioning by user ID
+So, let's do the paste_key as the partitioning key
+
+paste_key -- partition key
+user_id -- secondary index
+
+
+
+
+
+
+
+
+In this case then to fetch all text or pastes for an user_id, we have to query multiple partitions and then aggregate the results from all partitions 
+
+
+
+
+
+
+Also how much bandwidth can a single machine handle? 
+Ec2 supports 10Gb per second
+
+
+
+what about using write-through cache.?
+
+
+
+
+Can you pls say how did you arrive at the 5 seconds in the start?
+I assumed the client is using dial-up connection in north dakota
+
+
+
+
+Just joined, any restrictions on the total size of the text being uploaded?
+Yes, 10MB max paste upload size (10KB average)
+
+
+
+
+
+
+Key generation service is pregenerates auto increment keys or random keys?
+Pregenerated keys
+
+
+
+
+
+
+
+what about having both postgres and ES both ? postgres will push via CDC to ES
+
+
+
+Elastic search has built in Fuzzy search, right?
+
+UUID is 128 bits so quite large. But if you use a smaller key size you have more chance or random generation collision.
+
+
+
+
+
+also is ES good? when you say it stores 200MB per record or is that less compared to others? 
+
+
+
+
+
+
+
+Postgres sql allows storage of Large BLOB of 4GB apparently
+
+(for old posgres, 4GB for new postgres)
+
+That is ssly very high, any idea about Redis? If Redis is good we can maybe replace ES with Redis
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

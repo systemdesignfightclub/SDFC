@@ -1,0 +1,183 @@
+
+
+
+WHATSAPP
+
+
+
+RESOURCES:
+- Grokking
+- Alex Xu book 1
+- Stanling Chiang's book
+- Lewis Lin's book
+
+
+
+
+
+
+
+REQUIREMENTS:
+- sending and receiving messages
+- joining groups
+
+OUT OF SCOPE:
+- presence indicator
+- full-text search on messages
+
+
+
+
+
+3 approaches for receiving messages
+- short polling
+- long polling
+    - Pro: rebalancing complexity is handled for you
+    - Con: you still have the complexity of maintaining stateful connection objects
+- web sockets
+
+3 approaches for CDC
+- DB triggers
+- DB subscribed to the broker
+- two calls from the send server
+
+
+2 variations
+- small group variation (Today's coverage)
+- large group variation
+
+
+
+
+
+
+CALL OUT:
+- WhatsApp actually does the user list fetch on client-side
+- pull-based brokers (kafka) vs push-based (redis pub-sub and RabbitMQ)
+
+
+
+
+--------------------
+LIVE DISCUSSION QUESTIONS:
+
+
+
+
+What does stateless mean here?
+it means that the server maintains "state"
+usually state goes in the database
+
+
+
+
+
+
+can you explain again why wouldn't long polling be a good approach? It seems it is similar to Websockets approach, pls do correct me....
+
+
+
+
+yes got it thanks, also coming to the fan out part should we not use caching?
+
+
+
+quick note for Kafka in CDC - you likely want to optimize for throughput, which will come at the expense of latency (to optimize throughput you'd want to batch data reads)
+
+
+
+
+
+
+
+
+
+but joining a group would be write heavy right? Again pls do correct me...
+read-heavy because you receive messages more often than you join groups
+
+
+
+coz consider a famous person saying top 1k people joining the group would be given great discounted courses/coupons
+
+
+
+
+
+
+
+also for Kafka how would you consider multi-region consistency? As people from different parts of world can be in the same group (sorry a lot of questions by me but would love to know this one)
+- we'll have eventual consistency
+the concern might be over maintaining ordering of messages
+so, yes this could look weird, but you can have the client logic properly order the messages
+I think timestamps should come from the server
+
+
+
+
+
+
+does WhatsApp support full-text search on messages?
+out of scope
+
+
+
+--
+
+
+
+With every user possible having hundreds of chats and thousands of messages. WhatsApp keeps the backup on user device so it doesn't store or have the state.
+
+Although how does big message service work like fb maybe? Do they save messages to db ?
+
+
+
+
+
+also for Kafka how would you consider multi-region consistency? As people from different parts of world can be in the same group (sorry a lot of questions by me but would love to know this one)
+
+
+
+
+
+You can actually tune Kafka to your SLO if you don't want to swap to redis pubsub by tweaking max.poll.records, fetch.max.wait.ms, a couple other ones
+
+(pic src: https://developers.redhat.com/articles/2022/05/03/fine-tune-kafka-performance-kafka-optimization-theorem#optimization_goals_for_kafka)
+
+
+
+
+https://developers.redhat.com/sites/default/files/kafka_optimization_theorem_0.png
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

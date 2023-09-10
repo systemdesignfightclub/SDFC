@@ -1,0 +1,312 @@
+
+
+
+AIRLINE FLIGHT TICKETING
+
+
+
+REQUIREMENTS
+- users can browse available flights
+- users can book a flight
+- users can select a specific seat while booking
+
+
+OUT OF SCOPE:
+- "logistics" (we will only be handling single source, single destination)
+
+
+
+
+
+NUMBERS:
+1,000 TPS for reads
+10 TPS for writes
+
+
+
+
+
+
+ITERATIONS:
+- no payment gateway
+- add payment gateway
+- orchestration approaches
+    - web socket
+    - polling and email notification
+- 1,000 TPS for writes
+
+
+
+
+- schema
+- DB tech choice
+
+
+
+
+DB Tech choice
+
+- DynamoDB
+    - has triggers
+    - no 2D index support
+    - up to 20 secondary indices
+- **PostgreSQL**
+    - has triggers
+    - r-trees
+    - does support secondary indices
+- ElasticSearch
+    - does NOT have triggers
+    - quad-trees
+    - no limit on secondary indices
+- redis
+    - geohash
+    - no secondary index support
+
+
+
+
+
+
+
+Schema:
+
+
+Flights
+{
+    **flightID**: 1637UA
+    planeTypeID: BOEING_787
+    toLocation: SEA
+    fromLocation: SFO
+    toGate: 17C
+    fromGate: 20A
+    price: 200.00 (updated by the Pricing Service)
+    departTime: 1670005000
+    arrivalTime: 1680005000
+    seatsCount: 0
+    available: true/false (updated by DB trigger)
+}
+Approaches: seatsCount can count up or count down
+
+
+Tickets:
+{
+    [autoincrementID] -- another option for PK
+    **userInfoID**: 1237
+    **flightID**: 1637UA
+    idempotency_key: defabc-123-defabc
+    {paymentInfo}
+    authID: [] (from auth-capture workflow)
+    Seat: 37A/UNNASSIGNED
+    Status: REQUESTED/AUTHORIZED/PAYMENT_SUCCESSFULL
+}
+
+
+
+We have a 1-N relationship between a planeTypeID and Seat options
+SeatMapping:
+{
+    **PlaneTypeID**: Boeing_787 (80 seat options)
+    **Seat**: 37A
+    Class: ECONOMY/BUSINESS/FIRST/etc.
+}
+you would do a key-range query of the planeTypeID... (local query)
+you would also do a key-range query of the flights table (server call) -- to determine which seats are actually taken
+
+
+
+
+users:
+{
+    userInfoID: 1237
+    name: Albert Einstein
+}
+
+
+
+
+Ticket purchase steps:
+1) check if the idempotency key already exists
+2) (optional) create the ticket record w/ REQUESTED status
+3) record the authID on the ticket record and update status to AUTHORIZED
+4) run the payment against the payment service
+5) update the status to PAYMENT_SUCCESSFUL
+
+
+auth-capture workflow -- Stripe/Square has great documentation on this
+
+
+
+
+
+--------------------
+LIVE DISCUSSION QUESTIONS:
+
+
+
+Lets say flight goes from A->D with B and C intermediate stations. Are we considering them in system while designing? Or simply flight has single source and destination?
+
+
+How did you come up with those numbers, specifically 10 TPS write?
+
+
+TPS = Transactions Per Second (that's Amazon lingo)
+QPS = Queries Per Second
+
+
+Can you give any reference when we say we need more than 1 replication factor for DB?
+1000 TPS per node, N+1 replication (so that if one fails, it doesn't overload everything)
+
+
+Is there a general threshold around which single master writes become bottleneck? In this case, I guess 10 TPS is on the lower side.
+->
+In like to use 1000 TPS as rule of thumb -- I think I got this from Alex Xu's Volume II Digital Wallet chapter
+(you should be doing benchmarking of your specific case though)
+
+
+Can flights db be some search index like Elastic search ?
+
+
+
+
+what is second indices used for?
+when you need to filter down on something other than the primary key
+
+
+Also where exactly would we take advantage of DB triggers? Is that used only for CDC or something else too, thanks!!
+For updating seat counts after purchasing a ticket
+
+
+
+No of available seats can be one ?
+No of available seats can be in flights ?
+on flights table
+
+
+
+Probabbly, when the flight is completely booked, then the trigger will remove it from search or something
+
+
+why we need name in ticket? Can we change to user_id and then have an users table that have user name
+
+
+
+Can you teaching more how to choose a suitable database for a sample system?
+Alex Xu has a solid diagram for basics on this
+
+
+
+like different second index, write heavy, read heavy?
+
+
+
+How can make a system more creative on devs? (no offense on comparing sde and swe, just curious how apple does)
+
+
+
+Flights DB has all tables like Flights, Tickets, SeatMapping or we are using micro service with own DB tables?
+We are not doing federation for our design
+"federation" -- Donne Martin's system design primer
+
+
+
+what is the key and value for seat mappings cache?
+
+
+
+
+Any algorithm to generate idempotency key?
+twitter snowflake approach is probably enough here
+timestamp+ip_address+your own random number
+
+
+
+
+won't tickets have any Id like reservation or PNR Id ?
+
+
+
+
+
+how would this system ensure avoiding over booking ?
+you're allowed overbook
+
+
+Would you seperate economics, regular and luxury?
+
+
+Sorry what is CDC
+CDC = Change Data Capture
+
+
+won't twitter snowflake be an overkill for idempotency key. I guess UUID is enough
+it's client generated, it still has a risk of conflicts
+
+
+
+
+Is stripe the best for payment?
+I think it's one of the easiest to integrate with
+
+
+Are we using step function as distributed transaction or 2 phase commit? 
+This is more like sagas
+
+
+
+It's like normal, regular, economic, business, luxury of thousands seat and have a weird CDC iteration
+
+
+
+how do handle re-tries?
+browser (until you get the 200 status from the backend) and server side (from AWS steps, automatically)
+
+
+Actually its thousand of millions of normal, regular, economics, business, luxury of seats and the cdc iteration of boring
+
+
+Seat mappings cache is usually not changed right
+only changes when Boeing comes out with a new plane
+
+
+
+Can you explain about the business purpose of seat mapping?
+787 might have 60-80 seats
+all 1-40 + A through H
+
+747 / small planes
+20-30 seats
+20 rows + A through D
+
+
+
+Is there any special of aws step?
+it's basically AWS lambda
+but the retries and partial failures and DAG of dependent API calls is way easier to reason about
+(Herd -- Amazon proprietary)
+
+
+
+
+What are the advantages of federated data design?
+independently scale tables
+it's typically done before sharding
+for a managed, autoscaling solution, it typically mandates federation (spanner is a slight exception, which still does distributed transactions with paxos)
+
+
+
+Would you add an yellow pages DB?
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

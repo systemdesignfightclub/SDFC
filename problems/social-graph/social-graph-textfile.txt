@@ -1,0 +1,234 @@
+
+
+
+SOCIAL GRAPH
+
+
+
+RESOURCES
+- none; one of you guys requested this :)
+
+
+
+REQUIREMENTS
+- LinkedIn allows search over the 2nd+ degree connections
+- 1M TPS reads (roughly the scale that snapchat social graph handles)
+- 10k TPS writes (100:1 read:write ratio)
+- followers != connections (helps with celebrity issue)
+
+
+
+OUT OF SCOPE:
+- anything outside of the social graph service
+
+
+
+
+
+NUMBERS:
+- 1M TPS reads
+- 10k TPS writes
+- 500 connections on average with some imbalance for celebrity issue
+
+
+
+
+
+AGENDA:
+- graph DB approach
+- talk about graph DBs
+- not graph DB approach
+
+
+
+
+
+APPROACHES:
+
+
+
+
+
+
+
+
+
+
+--------------------
+LIVE DISCUSSION QUESTIONS:
+
+
+
+
+
+I think there's a 30k limit for connections
+
+
+
+
+what's a social graph
+it's basically the users DB
+
+
+
+
+Would love if you could touch on computing 2nd, 3rd (and if you feel brave to go above actual LinkedIn LOL - 4th degree) connections efficiently for every user
+
+such that it accounts for adding new connections without having to re-compute inefficiently (so, maybe account for clustering in caching)
+
+
+
+
+because when you friend a new person, recomputing paths to 50k nodes is not a walk in a park
+
+
+
+
+
+
+
+
+
+
+I think in graph DB we model data using relation and node
+
+
+
+
+
+
+SELECT user where college == "IIT" AND current_company == "AMAZON" AND prev_company == "GOOGLE"
+
+
+
+
+
+
+Do we need some kind of nodes and edges ?
+
+For example, one edge could mean that a particular user created a particular post.?
+
+
+
+
+
+They used to use SQL in early days 💀
+Youtube still uses SQL, and a tool called Vitess
+
+Youtube doesn't have to do these expensive degree computes
+That's correct
+
+
+
+
+
+
+Graph DBs:
+- 1B limit on node count, maybe 10B
+- poor latency
+- sharding is a challenge
+- the advantage of graph DBs is NOT performance, it's the convenience of the syntax
+
+
+
+
+but for graph BFS searches SQL is probably expensive as hell, no?
+
+
+(I thought graph more perrformant for graph stuff than SQL)
+^ common misconception
+
+
+
+
+
+
+what do you mean by "fan it out"?
+like twitter
+
+
+
+
+what is "join over the network" exactly and why is it expensive?
+bandiwdth becomes an extraordinary bottleneck
+
+
+
+
+
+
+
+
+
+
+
+
+
+BONUS question maybe for later: what if attributes like COMPANY had a tuple value e.g. COMPANY = {Google; 210000} 
+
+where 210000 was hidden salary survey data that you would use to compute average salary for that particular company specifically for people in your network up to 3rd degree. 
+
+So, user would chose company and how far degrees to include (only 1st, or up to 2nd, or up to 3rd) and would get average salary for particular company's employees within that user's social circle
+
+
+
+
+I don't think these many writes are done per new connection. There would be nightly jobs to do heavy liftings
+
+
+
+
+can you explain what "inlined" means in this context please?
+it just means duplicating the data into the 2nd table
+
+
+
+
+how 1st,2nd ,3rd degree connection represented in DB ?
+1st and 2nd are the degree attribute
+any higher degree just means it doesn't exist in the connections data store
+
+
+
+
+
+
+Tweet vs finding suggestion for network are different usecases no?
+tweets get fanned out
+connections are getting fanned out
+the architecture is similar
+
+BUT, the world population tweets more often than they add new connections on LinkedIn
+
+
+
+so, inline means local? as in "not remote"?
+I think of "in-line CSS"
+<b style="dvsknjvdsjknvds"></b>
+
+
+
+<style> dsvsdvsdvdsv  </style>
+
+
+
+<b id="sdsd"></b>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
