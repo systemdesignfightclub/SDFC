@@ -1,7 +1,19 @@
+# Link to my youtube channel:
+
+### [System Design Fight Club](https://www.youtube.com/@SDFC) - Live every weekend, over 50 problems covered
+
+https://www.youtube.com/@SDFC
+
+Files, diagrams, and screenshots from the live coverage of over 50 problems is uploaded to the following subfolder of this repo:
+https://github.com/systemdesignfightclub/SDFC/tree/main/problems
+
+<img src="https://i.imgur.com/7CAYufK.png"  width="500">
+
+# Roadmap & Useful Resources
 
 For full image resolution, you may have to visit the following URL on a desktop: https://i.imgur.com/xcFVJav.png
 
-<img src="https://i.imgur.com/xcFVJav.png"  width="800">
+<img src="https://i.imgur.com/xcFVJav.png"  width="1000">
 
 
 
