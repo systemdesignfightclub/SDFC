@@ -1,0 +1,98 @@
+
+
+
+DISTRIBUTED CRON JOBS SERVICE
+
+
+
+RESOURCES:
+- the book titled "Site Reliability Engineering"
+
+
+
+REQUIREMENTS:
+- can add events
+- events trigger an alarm
+
+
+
+
+
+"uniqueness constraint" -- DDIA has a thing about providing a uniqueness constraint with total order broadcast
+
+
+
+
+
+
+
+TWO decisions being made:
+1) approach to change data capture
+2) approach for de-duplication of the cron replicas
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Could you give a quick recap on cron jobs before starting?
+it's for scheduling stuff on linux servers
+
+isn't sending notifications to a lot of people a complicated thing in itself?
+
+
+Kafka is publish subscribe if I'm not wrong, and lambda is doing a request response here?
+
+
+
+Can you shed some light on how spanner handles dedup? Saying "spanner will manage it" would set some interviewers upset
+
+
+
+
+
+Is it possible that lambda has pulled a message from Kafka before a duplicate message was pushed to Kafka?
+
+"total ordering" vs "total order broadcast"
+causal consistency / sequential consistency vs linearizability
+
+
+In that case any SQL based/consistent DB can be used? No need for spanner specifically
+CockroachDB, PostgreSQL
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,435 @@
+
+
+
+SEARCH AUTOCOMPLETE
+
+
+
+
+RESOURCES
+- Grokking: "Typeahead"
+- Alex Xu: "Auto-complete"
+- Lewis Lin: "Auto-suggest"
+- Stanley Chiang: "Auto-complete"
+
+
+
+
+REQUIREMENTS
+- users can type some text
+- top 10 auto-completion results will be shown to the user for their text
+- analytics will be collected on what they are searching for
+
+
+OUT OF SCOPE:
+- the web crawler portion
+
+
+
+
+
+NUMBERS:
+- 50,000 QPS
+- 200ms
+
+
+
+
+
+AGENDA:
+- a proper system design
+- latency estimates
+- if we have time, personalization
+
+
+
+
+
+
+
+
+
+
+
+
+--------------------
+LIVE DISCUSSION QUESTIONS:
+
+
+
+
+
+
+How can I request to cover new topics for system design in coming sessions?
+
+
+
+
+i have a question about the sequential id generator. Is it used by SQL database? Can the sequential id generator work in a distributed way or it's only sequential in its own instance?
+yes, it can kinda be distributed, but it requires paxos
+
+
+
+
+
+
+and off by one errors
+
+
+
+
+
+
+
+why logs added?
+to build the tries
+
+
+
+is the log used to collect search history to build future trie tree?
+yes
+
+
+
+the total time complexity for search using tries is O(L) + O(N) + O(K log K), with the bottleneck being O(N). can we use hash prefix tree?
+
+
+N - the number of keys/nodes (e.g. prefixes) in our dataset K - the number of completions stored for a given prefix L - the length of the prefix we are looking up
+
+
+N - the number of keys/nodes (e.g. prefixes)
+K - the number of completions stored for a given prefix
+L - the length of the prefix we are looking up
+
+
+
+
+
+
+what can be alternate to object store? fast write => cassandra/scylladb?
+LSM-Tree makes more sense if each search is individually written, instead of transferring a full log file
+
+
+
+i think we can use path compression like storing some results on each trie nodes to improve the real time performance of trie?
+
+
+
+
+s -> a -> n -> " " -> F
+
+
+
+
+"s" -> [top 10 results]
+
+"sa" -> [top 10 results]
+
+"san" -> [top 10 results]
+
+
+
+can we use push instead of pull for log? like the backend service will push to log copy workers?
+you would be putting the retry logic on the server machines instead
+
+
+
+
+“why it is O(N) for finding the completions?” This is because after finding the prefix node, you still have to traverse down to all of its child nodes to find its completions. 
+A trie is built, but the actual K-V store should definitely be doing some kind of pre-caching trick
+
+
+
+
+
+hink we don't have to traverse down to all of its child nodes to find its completions. because at each trie node, we can store the top 10 child results
+
+
+
+
+whats storage choice for KV store? Redis? I think DDB would definitely add more latency
+
+
+this is a trie stored in KV store with top10result cached
+Yes.
+
+
+
+not sure about hash prefix tree (or the time complexity there, I think searches are usually O(L) where L is length of search word), but there is this crazy trie building algo: https://en.wikipedia.org/wiki/Ukkonen%27s_algorithm
+
+
+
+O(N) + O(L) makes sense, still don't follow the O(k logk) part though, can you clarify again?
+
+
+
+
+
+
+- machine count estimates
+- latency estimates
+- ML "personalization" of search results
+
+
+
+
+why not Mongo db for trie store
+whatever is most optimal for the reads
+
+
+mongodb is B+ tree based
+
+
+
+
+
+Tail-end query approaches:
+1) DynamoDB and all tail-end queries are also "pre-flattened" into K-V data structure shape
+2) Leave it in a Trie structure with aggregated counts stored on the nodes, using MongoDB (or possibly ElasticSearch)
+
+
+
+and its CP system instead of AP from CAP
+we are doing an AP system
+
+
+
+
+By serializing the sorted set of completions as a document and storing it with its prefix in MongoDB, the persistence process is relatively seamless. 
+
+
+
+
+The KV store is all static data, can it be pushed down to a CDN for low latency?
+CDNs might be more expensive
+
+
+
+MongoDB primarily for the fact that its key-document metaphor mapped nicely to the key-value setup we utilized in Redis. 
+
+
+
+I am proposing Mongo db for storing Trie serilalized Store 
+
+when we have cache miss then searching from mongo db makes sense IMO
+
+
+do you mean when the K-V pair, when the "V" is pretty big, like a document, mongodb is a better choice?
+
+MongoDB definitely seems a lot more space efficient
+DynamoDB would have A LOT of duplicated values from the lists copied to multiple key values
+DynamoDB would have A LOT more K records
+
+
+Redis is good for K-V , redis sorted set
+
+
+
+CDN has more sense in case results across region is same (not personalised)
+
+
+
+was the netflix cache this: https://openconnect.netflix.com/en/
+
+
+
+does this limit the size of the trie that we can use? if we use dynamo key value pair, the trie can be very large. if we use mongodb document based, can the trie be very big as well? 
+I think MongoDB would be more space efficient
+
+
+if we need a number of tries for that, so we need to look up different tries
+
+
+
+
+
+How K-V store partioned? Based on alphabet start?
+
+
+Redis Node 1: A-G
+
+Redis Node 2: H-O
+
+Redis Node 3: P-Z
+
+
+
+
+Redis Node 1: A-G
+
+Redis Node 2: H-PE
+
+Redis Node 3: PF-Z
+
+
+
+
+
+MOngo db search also in case of cache miss is more efficient then dynamo db
+
+
+
+
+
+
+- machine count estimates
+- latency estimates
+- ML "personalization" of search results
+
+
+
+
+
+300 characters
+
+
+600 bytes of data for the response
+50k QPS
+
+
+50k * 1kB
+
+50 1MB
+
+50MB per second
+
+.05GB
+.4 Gb
+
+
+8Gbps
+
+
+We are not bandwidth bound
+
+
+
+
+3 regions,
+and 3-4 machines per region for handling the peak traffic in a day
+
+
+
+
+
+what bandwidth level is considered as "bound" for a machine?
+EC2 instances can handle up to 10Gbps
+
+
+
+
+Can you explain why you come to the number 3-4 machines per region?
+
+50,000 QPS for total traffic
+30k-40k QPS
+maybe one machine can handle 10k QPS (in digital wallet chapter of Alex Xu's volume II, it said a DB could handle 10k QPS)
+So, 3-4 machines
+
+
+
+how the mongo db data would be populated ?
+
+
+
+
+I mean why it's not 5 or 10 machines?
+5 machines minimum, for N+1
+
+
+
+
+so let say EC2 instances can handle up to 10Gbps. Suppose that I have an upload file service and upload a 20Gb file. So it I need to divide the file to 2 subfile and then 2 request for upload?
+
+"Ping of death"
+"Packet of death"
+65kB
+
+
+
+how often we will update trie ?
+let's say weekly
+
+
+
+
+
+
+
+hmm I mean in the case of upload file, can we use that to estimate the latency?
+
+
+
+
+
+do we require browser caching ? 
+cache static assets, like js bundle and HTML
+"google.com"
+
+
+
+
+
+
+For many applications, autocomplete search suggestions may not change much within a short time. Thus, autocomplete suggestions can be saved in browser cache 
+it makes a lot of sense if they search for the same thing a lot
+
+
+the data model will be stored in RAM of the instance?
+
+
+
+
+data model will be hosted in some model platform like sagemaker?
+
+
+
+
+basically a sagemaker endpoint will be called to invoke models?
+
+
+
+
+
+why we need SageMaker? We need to copy all the training data to it, which is unnecessary load?
+It's an "auto-ML" tool
+
+
+
+
+h yeah but we need the copying all the training data from db to it? which is a high load?
+
+
+
+
+
+
+
+data model can't be hosted in ram we need a service somewhere like ranking service done here
+
+
+
+
+hmm but I'm still confused, why do we need to copy training data from one olap data warehouse to another olap data warehouse? Why don't we just query from one data warehouse?
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
