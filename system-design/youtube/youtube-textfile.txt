@@ -1,0 +1,170 @@
+
+
+
+
+
+
+Problem Topic:
+YOUTUBE
+
+
+
+
+Functional requirements:
+- upload a video
+- watch a video
+(- search for videos)
+(- view counts / analytics for videos)
+
+
+
+
+Non-functional requirements:
+- high availability (eventual consistency is definitely good enough)
+- low latency is pretty important (for video viewing)
+
+
+
+
+
+
+Numbers:
+
+800M DAU
+5 video views per day on average
+
+
+1:200
+view to upload ratio
+
+300MB on avg. per video
+
+
+25% video watch rate
+
+
+
+
+
+
+**how many views per second?**
+"bandwidth"
+
+800M DAU * 5 -> video views per day
+= 4B views per day
+4B views per day / 100k -> views per second
+= 4000M / 0.1M
+= 40,000 TPS
+
+So, we have 40,000 views per second
+
+
+
+**how much bandwidth do we need (for down)?**
+40,000 * (0.25 * 300MB)
+40,000 * 75MB
+= 10,000 * (300MB)
+= 3M. MB
+= 3k. GB
+= 3 TB
+
+we need 3 TB down per second...
+
+
+
+**uploads per day**
+4B views per day
+1:200 of upload:view ratio
+4B / 200 = uploads per day
+= 4000M / 200
+= 20M uploads per day
+
+
+
+
+**how much upload volume per day?**
+20M uploads per day
+
+how much per day?
+20M * 300MB per video = volume per day
+= 6B MB per day
+= 6M GB
+= 6k TB
+= 6 PB
+
+6PB "UP" per day
+
+
+
+
+**how much upload per second?**
+6B MB per day. / 100k
+= 6000M MB / 100k
+= 60M MB / 1k
+= 60k MB per second
+= 60 GB per second
+
+
+
+
+**how much video storage?**
+how many much do we need for one whole year of video uploads?
+
+6PB "UP" per day * 365
+-> 6PB "UP" per day * 333
+= 2PB * 3 * 333
+= 2PB * 1000
+= 2000PB per year
+= 2 exabytes of data per year
+
+
+
+
+(then multiple that by 20 for a nice upper bound of all of youtube's total videos)
+= 2000PB * 20 per year
+= 40,000 PB in total, as an upper bound for 20 years of video content
+
+= 40 exabytes of data
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
