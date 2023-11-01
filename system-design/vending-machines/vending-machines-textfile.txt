@@ -1,0 +1,250 @@
+
+
+
+"SMART" VENDING MACHINES
+
+
+
+RESOURCES
+- personal interview experience
+- similar to hotel booking, but higher scale
+- also fun extra feature has similarity to "proximity service / yelp"
+
+
+
+REQUIREMENTS
+- only supports credit card as a payment method
+- extra feature: web interface for finding nearest machine with a specific item
+
+
+
+OUT OF SCOPE:
+- payment service implementation is a different problem entirely and should be treated as a black box
+
+
+
+
+
+NUMBERS:
+- 10M vending machines
+- 100 payment transactions per machine per day
+- 100:1 read:write ratio
+
+10k TPS of payment transactions
+1M TPS of read operations
+
+
+
+
+
+
+10M vending machines
+100 items each
+
+
+
+
+
+
+
+
+
+
+CHECKLIST:
+- load balancers
+- CDNs?
+- secondary indices?
+
+- DB schemas
+
+- partitioning keys, secondary indices
+
+- performance analysis numbers (return to this at end)
+
+
+
+
+
+
+
+
+
+
+"Auth-Capture Workflow"
+Stripe has phenomenal documentation on this
+
+
+
+
+
+
+
+1) auth step
+2) capture step
+3) dispense physical item
+
+
+
+
+1) auth step
+2) dispense physical item
+3) capture step
+
+
+
+
+
+
+
+
+
+
+--------------------
+LIVE DISCUSSION QUESTIONS:
+
+
+
+
+
+
+
+Since we have time to kill, any books/ebooks/audio about starting off as a entry dev? I am learning Java and Springboot
+
+Donne Martin's System Design Primer
+
+my roadmap:
+#read-me on discord
+https://i.imgur.com/dZEbZaT.png
+
+
+
+
+
+
+
+Do you know any resources/books on cost analysis - how much it would cost to run a designed system on AWS vs Firebase vs Azure vs VPS vs self-host?
+PEs at Amazon should have a "cost awareness"
+worry about machine count estimates first
+Alex Xu -- has some stuff on CDN costs somewhere
+1) machine count estimates
+2) latency estimates
+3) cost estimates
+
+
+
+
+
+
+
+What do you feel the best language is to learn to get a FAANG role? I prefer backend than fronted
+anything
+Java / python
+whatever's best for leetcode
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+How about performance analysis? Do you have any recommendations on perf analysis? How to benchmark system you built/designed to see its cost prediction before you prod it
+
+I.e. to have mock runs and then plug perf benchmarks into AWS price list to know how expensive your system is
+
+
+
+
+
+
+
+
+
+How would you structure the call if we were to support multiple machines for different items? Like I was buying item1 from machine and item2 from machineB
+those are two separate transactions
+
+
+
+
+
+
+
+
+
+
+Why not use API Gateway instead of load balancer everywhere ?
+ELB - Elastic Load Balancer
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
