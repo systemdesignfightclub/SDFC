@@ -1,0 +1,177 @@
+
+
+
+DESIGN A DISTRIBUTED DATABASE
+
+
+
+RESOURCES:
+- taken from somebody's real google system design interview
+
+
+
+
+
+REQUIREMENTS:
+- distributed database
+- specify stuff like isolation level, transactions support, consistency level
+
+
+
+
+Variations:
+
+
+1) Read-heavy
+2) Write-heavy
+3) Total ordering and heavy writes for ticketmaster/"flash sale"
+
+
+Most use cases are read-heavy
+
+
+
+
+Can you explain whats total ordering use case briefly?
+---
+ordering all the records of the database, for example: flash sales on amazon.com
+
+"fairness"
+I am going to be using "weak fairness"
+which is the difference between "sequential consistency" and "linearizability"
+
+
+
+Is weak fairness is the middle ground between eventual consistency and strong consistency?
+(Solves many problems of eventual consistency but is slightly less performant?)
+---
+there's actually multiple there.
+jepsen.io/consistency
+
+
+
+Does it make sense to have a separate coordinator for all of the shards? (Like ZooKeeper)
+Or does the request router handle coordinating the shards?
+---
+zookeeper and etcd or strongly consistent KV stores
+etcd is used by kubernetes internally
+
+
+
+
+
+
+
+^ general notes
+------------------------------
+
+
+
+
+
+
+
+Why single-leader?
+simplifies write conflicts
+concurrent writes are impossible when PostgreSQL is set to serializable isolation level
+
+
+
+
+aim for sequential consistency
+---
+snapshot isolation
+multi-version concurrency control
+use some "version vectors"
+
+
+
+"request router"
+
+
+
+
+
+
+
+
+read-heavy
+-----
+
+
+B-tree
+single-leader
+
+DynamoDB/spanner style
+
+snapshot isolation
+multi-version concurrency control
+
+use some "version vectors"?
+
+aim for sequential consistency
+
+
+
+
+write-heavy
+----
+
+LSM-tree
+leaderless
+
+cassandra/riak/scylla styled
+cosmos DB is also some inspiration here
+
+
+probably still snapshot isolation & multi-version concurrency control
+
+(request router stuff might be different)
+
+
+just aim for causal consistency,
+and do riak & cosmos DB's write conflict resolution specifying thing
+
+
+
+
+
+
+ticketmaster/distributed linked list/"flash sale" oriented DB
+(write-heavy and total ordering is important)
+-----
+
+meaning aim for sequential consistency
+BUT, we're super write-heavy
+
+single-leader
+LSM-tree
+
+
+snapshot isolation
+multi-version concurrency control
+use some "version vectors"?
+
+
+request router is likely going to stay looking like the read-heavy approach
+
+
+
+FOR THIS SCENARIO,
+basically just follow Variation 1, but shard the hell out of it (fewer read replicas necessary)
+and use LSM-trees
+and use the serializable isolation level on each leader node
+
+
+
+
+
+
+
+
+
+
+
+
+
+

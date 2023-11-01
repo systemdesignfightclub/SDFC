@@ -1,0 +1,172 @@
+
+
+
+
+WORKFLOW AUTOMATION SERVICE
+
+
+RESOURCES:
+- orchestration
+    - Conductor (from Netflix)
+    - Apache Airflow (from Airbnb)
+    - AWS step functions
+    - AWS SWF ("simple workflow service")
+    - Azkaban (from LinkedIn)
+    - Luigi (from Spotify)
+    - Apache Oozie
+- task queue
+    - Celery
+- workflow automation service
+    - Zapier
+    - Rippling
+    - JIRA workflows
+
+
+
+REQUIREMENTS:
+- documents needs to be manually checked/vetted by a team of experts for legal/compliance reasons
+- different teams of experts that are specialists for different types of documents
+- system that takes a set of documents from a person and routes them to the appropriate teams
+- collect their response and respond back a consolidated response
+
+
+
+NUMBERS:
+- overall SLA for a job is 2 days
+- scale is about 1M docs/day
+- 2MB per document
+- 20 tasks per workflow
+- 5 documents per workflow
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+How many documents per second?
+
+1M/day
+1M / 100k
+->
+10 documents per second
+
+
+
+
+
+How many workflows per second?
+10 documents per second / 5
+
+-> 2 workflows per second
+
+
+
+
+
+How much bandwidth is needed?
+10 documents per second * 2MB
+
+20MB per second
+20 * 8
+160 Mb
+
+0.16 Gb per second
+
+
+
+
+How much storage needed for a day?
+
+1M docs/day
+2MB per document
+
+2M MB
+2k GB
+2 TB
+
+
+
+
+
+
+How much storage needed for a year?
+
+2 TB * 365
+2 * 350
+->
+700TB
+
+
+
+
+How much storage needed for 10 years?
+
+
+700TB * 10
+
+7000 TB
+
+7 PB
+
+
+
+
+How many tasks per second?
+
+
+2 workflows per second
+20 tasks per workflow
+
+-> 40 tasks per second
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

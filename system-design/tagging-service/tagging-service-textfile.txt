@@ -1,0 +1,212 @@
+
+
+
+TAGGING SERVICE FOR ATLASSIAN PRODUCTS
+
+
+
+RESOURCES:
+- https://leetcode.com/discuss/interview-question/system-design/838025/Design-a-tagging-system-like-tags-used-in-stack-overflow/690918
+
+
+EXAMPLES:
+- Jira
+- Confluence
+- StackOverflow
+- Perhaps, Twitter Hashtags
+
+
+REQUIREMENTS:
+- add a tag to an "item" (JIRA ticket, confluence wiki page, etc.)
+- search for a tag, displaying all the items that have the tag
+- create a tag
+- (extra) recommend a tag for an "item" (classification problem in ML)
+- (extra) "trending"/"hot" tags
+
+
+N-M relationship of tags to posts/"items"
+
+
+
+OUT OF SCOPE:
+- Auto-complete
+
+
+
+First Approach:
+hundreds TPS for reads
+hundreds TPS for writes
+
+
+
+
+Second Approach:
+10,000s or 100,000s for reads
+hundreds for writes
+
+Read replicas
+
+
+
+
+
+
+Third Approach:
+100,000s for reads
+10,000s or 100,000s for writes
+
+Sharding and Fan-out
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+a company with 10,000 employees
+each employee makes 10 tickets per week
+each ticket has 3 tags
+
+->
+
+300,000 tags per week
+
+280,000 / 7
+
+40,000 tags per day
+
+120,000 00
+
+
+
+
+
+12,000,000
+
+8 bytes involved in adding a tag to a post/item
+
+
+96,000,000 bytes per year
+
+
+96,000 kB
+
+96 MB
+
+100 years of tags....
+
+9600 MB of tag data
+
+9.6 GB
+
+Thus, we have no concern for data size in this scenario.
+
+
+
+
+
+
+
+
+
+
+
+Design for our upcoming Tag management service
+#SystemDesign #Programming #TagService
+
+
+
+each tag is like a user's "timeline" from twitter
+
+
+
+
+
+
+
+
+
+hot partitioning issue
+celebrity issue
+
+
+This may apply to particularly popular tags
+
+
+Approaches for handling the hot partition issue:
+- consistent hashing -> KILLS key-range query performance
+- twitter does a hybrid approach -- the celebrities on twitter have a "user cache"
+    - fan-out + user cache
+- you just overscale you're read throughput or write throughput (RCUs and WCUs)
+      - "paying for read units and write units for dynamoDB"
+
+
+
+codeKarle
+
+
+
+
+
+#SystemDesign
+2,000 reads (TPS)
+
+#Programming
+500 reads (TPS)
+
+
+
+
+
+
+
+md5.2xlarge
+
+it's only coming to around a dozen vCPUs
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

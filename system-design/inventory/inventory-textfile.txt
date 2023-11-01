@@ -1,0 +1,120 @@
+
+
+
+
+INVENTORY DESIGN
+
+
+
+
+RESOURCES:
+- some payment gateway, like stripe
+
+
+
+
+
+
+REQUIREMENTS:
+- show available items
+- track the inventory, as it changes
+- inventory changes may occur in distributed transaction performed by other services
+  - expose an interface for these distributed transactions
+- inventory snapshots and auditing
+
+
+
+OUT OF SCOPE:
+- ordering itself
+- payments
+- listings and location look-up
+
+
+CALL OUTS:
+- thread contention (prime day lightning deals)
+- large objects issue if too many "holds" get placed
+
+
+
+
+
+
+
+NUMBERS:
+- 3.0B "visits" in one month and 10 page views per visit
+- 300M items were sold over the course of 2 days for prime day 2022
+
+less important numbers:
+- 300M regular customer accounts
+- 200M prime accounts
+- 12M items from AFN itself
+- 350M items when considering 3rd party sellers
+- 175 global fulfillment centers
+- 10M 3rd party sellers
+
+
+
+
+
+
+how many reads?
+3B * 10 -> 30B reads per month
+30B / 30 -> 1B reads per day
+
+1B / 100k -> reads per second
+
+10,000 reads per second
+
+
+
+
+
+
+how many writes?
+300M items were sold over the course of 2 days
+300M / 2 = 150M items per day
+
+
+150M / 100k
+1,500 items per second
+
+
+1500 writes per second
+
+
+
+
+
+strong consistency
+1) place a hold on the item
+request:
+  item_id: abc-123
+  count: 2
+
+response:
+  defabd-123-defabc
+
+
+
+high availability
+2) "execute" the hold
+
+request:
+  uuid: defabd-123-defabc
+
+response:
+  200
+
+
+
+
+
+
+
+
+
+
+
+
+
+
