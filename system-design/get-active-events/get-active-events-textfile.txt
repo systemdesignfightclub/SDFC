@@ -1,0 +1,312 @@
+
+
+
+GET ACTIVE EVENTS
+
+
+
+BACKGROUND
+- random real "FAANGMULA" question that got leaked
+
+
+
+RESOURCES
+- Alex Xu Volume II's Gaming Leaderboard chapter
+
+
+
+REQUIREMENTS
+- write event start and end timestamps independently
+- original prompt is to get the count of events active at a given time
+- (I originally misread it as get the actual list of active events, which is a fun variation)
+
+
+Prompt:
+```
+Imagine a system where we ingest 2 different data.
+set_start(event_uuid, start_timestamp)
+set_finish(event_uuid, finish_timestamp)
+
+- incoming data via these endpoints are quite high (can't fit in a single machine.)
+- finish event can come before start even
+
+
+now, what's the optimal way to calculate getActiveEvents(timestamp) - given timestamp get the counts of active events.
+```
+
+
+
+
+
+
+NUMBERS:
+- No original scale numbers were provided, so I made several variations of this as well
+
+
+
+
+
+
+
+
+CHECKLIST:
+- [x] load balancers
+- [y] CDNs?
+- [y] secondary indices?
+- [y] DB schemas
+- [y] partitioning keys, secondary indices
+- [x] NALSD numbers (return to this at end)
+
+
+
+
+
+
+
+
+
+
+
+
+
+VARIATION ONE:
+---
+events list, write-heavy
+
+100,000 TPS writes
+100 TPS reads (key-range queries)
+
+- scatter-gather is fine
+
+
+
+
+VARIATION TWO:
+---
+events list, heavy read volume
+
+100,000 TPS writes
+100,000 TPS reads (key-range queries)
+
+- use an r-tree????
+
+
+
+VARIATION THREE:
+---
+count only, write-heavy
+
+100,000 TPS writes
+100 TPS reads (key-range queries)
+
+
+
+
+VARIATION FOUR:
+---
+count only, heavy read volume
+
+100,000 TPS writes
+100,000 TPS reads
+
+
+
+
+
+
+VARIATION FIVE:
+---
+count only, heavy read volume, strong consistency
+
+
+
+
+
+
+
+
+
+
+{
+    event_uuid: defabc-123-defabc -- partitioning key (and primary key)
+    start_timestamp: 1670005000 -- local secondary index
+    end_timestamp: 1670008000 -- local secondary index
+}
+
+
+
+
+
+
+
+
+SELECT * FROM my_table
+WHERE start_timetamp < ${specified_time}
+AND end_timestamp > ${specified_time}
+
+SELECT * FROM my_table
+WHERE start_timetamp < ${specified_time}
+AND end_timestamp > ${specified_time}
+AND start_timestamp != NULL
+AND end_timestamp != NULL
+
+
+
+
+
++ COUNT aggregate function
+SELECT * FROM my_table
+WHERE start_timetamp < ${specified_time}
+AND end_timestamp > ${specified_time}
+AND start_timestamp != NULL
+AND end_timestamp != NULL
+
+->
+
+O(K logN )
+
+
+
+
+O( (1 * log N) + (1 * log N) )
+
+=
+O( log N )
+
+
+
+
+--------------------
+LIVE DISCUSSION QUESTIONS:
+
+
+
+
+
+what is finish event can come before start event?
+
+
+
+
+
+
+
+
+how we use event_uuid as partition key and do scatter gather? are you forced to do a pretty big scatter accross the instances
+
+
+
+
+
+which index are we going to have on mysql table?
+PostgreSQL - r-tree
+
+
+
+
+
+
+
+can we partition by the first 3 digit of the starttimestamp
+still hot partition
+
+157
+158
+...
+166
+167
+
+and use consistent hashing on the partition key?
+still hot partition
+
+
+
+
+
+
+
+
+
+instead of buckets why we can't use kafka partitions?
+you have to make sure the final data store isn't getting hot partitions either
+
+
+
+
+
+
+Could be naive question, can we partition postgresql? Is there index on startTime_endTime compound fields?
+Yes :)
+
+
+```
+{attrA}_{attrB}
+```
+
+
+
+and can postgresql support more reads than DDB considering only that is difference in option1 and 2?
+No, it's only because I want to do a manual partitioning trick
+
+
+
+
+how do you fan out to the buckets if there is only end event, no start event?
+you don't
+
+
+
+
+
+
+for the redis sorted set, when you query for the start events < specific timestamp, do you have to do a full scan for the time earlier than specific timestamp, or do we have a bucket as well
+
+
+
+
+
+also if this is write heavy why are we not considering Cassandra as one option?
+
+
+
+
+Using SSTables would be great option here..
+
+
+
+
+
+I mentioned about Cockroach DB as we need high consistency.
+
+
+
+
+do you mean for each event id, we do a query in start event data store and end event data store on (redis sorted set?) would that still be a scatter and gather (to get the count)
+
+
+
+
+
+what is db for operation data store?
+
+
+
+what is read service reading from Command Executor ?
+checking the status,
+waiting for the result field to be populated
+
+
+
+
+
+
+is command executor is an orchestrator ?
+either *AWS Step* OR AWS lambda
+
+
+
+
+
+
+
+
