@@ -1,0 +1,166 @@
+
+
+
+
+
+AD CLICK AGGREGATOR
+
+
+
+
+1 billion clicks per day
+2 million ads
+
+up to a few minutes from end-to-end
+0.1kB per click (mostly for metadata anlytics info)
+
+
+
+
+100k MAU for analysts
+each views the anlytics page 10 times per day on average
+
+
+
+mesothelioma ads charge $1000 per click, so we don't really want to have ANY double charges occur
+
+
+
+
+
+
+
+
+Functional Requirements
+- we should capture ad click events
+- we should be able to query the ad click events, as a marketing analyst
+
+
+
+Non-functional Requirements
+- actual ad clicks and redirect should be pretty fast (low latency)
+- high availability for the ad click events
+
+- eventual consistency is good enough
+
+
+
+
+
+
+
+Numbers
+
+
+How many clicks per second?
+1B clicks per day / 100k
+-> 10,000 TPS
+
+
+(We'll say peak is 5X of avg.)
+
+
+up to 50,000 TPS
+
+
+
+
+
+
+
+How much bandwidth for the clicks?
+
+
+10,000 TPS avg. * 0.1 kB per click
+-> 1,000 kB per second
+= 1MB per second
+
+
+
+
+50,000 TPS avg. * 0.1 kB per click
+= 5MB per second
+
+
+
+
+
+How much storage for 1 year of data?
+1MB per second * 100k seconds in a day * 365 days in a year
+
+
+1MB * 100k * 365
+100k MB * 365
+36,500k MB per year
+= 36,500 GB
+= 36.5 TB
+
+
+
+How much storage for 10 years of data?
+36.5 TB * 10
+= 365 TB
+
+
+
+
+How many analytical page view per second?
+
+
+
+100k MAU for analysts
+each views the anlytics page 10 times per day on average
+
+
+100k DAU
+10 times per day on average
+
+100k * 10 -> the number of page views per day
+1M pages views per day
+
+1M / 100k
+= 10
+
+10 TPS for analyst page views
+
+
+
+
+
+
+
+The reason to not use `ad_id` as partition is hot partition right?
+
+
+
+
+
+
+OPEN QUESTION:
+can streams get backpressure?
+
+noisy neighbor problem
+shuffle sort
+
+influxDB for time series DBs
+
+Flink - Jordan has no life has a good video on this
+
+
+lambda vs kappa architecture
+
+
+
+short: change data capture
+
+
+So we'll be running the following query on Dynamo
+SELECT COUNT(*) FROM ..
+WHERE ad_id = 1234 and timestamp  >= t1 and timestmap <= t2
+
+
+
+
+
+
+

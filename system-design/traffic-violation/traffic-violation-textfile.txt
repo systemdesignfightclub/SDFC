@@ -1,0 +1,134 @@
+
+
+
+TRAFFIC VIOLATION DETECTION SERVICE
+
+
+
+RESOURCES:
+- real interview question from staff/principal engineer interviews
+
+
+
+REQUIREMENTS:
+- detects violations such as vehicle collision, exceeding speed limit, running a red light
+- cameras
+    - 1000s throughout a city
+    - 500 meter spacing between them
+    - images at a rate of 10 frames per second
+    - each image is 20KB
+- available "black box" service:
+    - input: set of images
+    - output: violation type, vehicle number plates
+- send the "control room":
+    - where violation occurred
+    - vehicles involved
+    - trace back to set of images of the incident
+- must be able to scale up as more cities and cameras are added
+
+
+
+NUMBERS:
+- tens (let's say 20) of cities
+- 1000s (let's say 5,000) of cities per camera
+- image is 20KB
+- 10 frames per second
+- "packet of death" is 64KB
+
+
+
+
+
+
+How many cameras?
+20 cities * 5,000 cameras
+-> 100,000 cameras
+
+
+
+How much bandwidth per second per camera?
+10 frames per second * 20KB
+-> 200KB/s per camera
+
+
+
+How much bandwidth total across all the cameras?
+100,000 cameras * 200KB/s per camera
+->
+20M KB/s
+20k MB/s
+20 GB/s
+* 8
+
+160Gb/s
+
+
+1 - 10 Gb/s
+16 EC2
+
+
+
+What's our Write TPS from the cameras?
+100,000 cameras * 10 frames per second
+-> 1M TPS
+
+
+
+How much storage do we need for a year?
+20 GB/s in total * 100k seconds in a day * 365
+2M GB per day * 365
+2k TB
+2 PB/day
+
+
+
+700M GB per year
+630 PB
+
+
+
+
+
+
+
+
+
+
+
+
+
+A single instance of the violation processing service won't be able to handle that kind of bandwidth on a single instance. Is the idea to have a pool of these and each one is responsible for querying the latest images for a specific set of cameras? what if instead of a metadata DB we used a partitioned queue to facilitate handing off work to a worker pool
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

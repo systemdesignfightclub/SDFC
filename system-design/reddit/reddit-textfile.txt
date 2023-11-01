@@ -1,0 +1,108 @@
+
+
+
+REDDIT
+
+
+
+RESOURCES:
+- just for numbers to use: https://foundationinc.co/lab/reddit-statistics/
+- the Exponent video was actually not that great
+
+
+
+REQUIREMENTS:
+1. users can make posts
+2. upvotes & downvotes on the posts of other users
+3. a) view/read "TOP" posts list
+   b) view/read "NEW" posts list
+   c) view/read "HOT" posts list
+
+
+OUT OF SCOPE:
+- comments on posts
+- text search functionality
+- user karma calculation
+
+
+
+Call outs:
+- thread contention for upvotes is actually very low; CRDTs not necessary
+- we could definitely have a "celebrity problem" or "hot partition" issue in regards to popular subreddits
+    - choosing an alternative partition key comes at the trade-off of deep pagination performance due to "scatter-gather"
+- Why does "celebrity problem"/"hot partition" not apply to individual posts? hot partitions are more applicable to a "range" of keys, plus volume on individual posts never gets that high
+- fan out like twitter? likely not a good idea because the posts jump around (re-order) too much, rather than twitter which should maintain a chronological order
+
+
+
+NUMBERS:
+- 50M DAU
+- 330M MAU
+- 21B "screen views" per month
+    -> 7,000 TPS (reads, req #3)
+- 1.6B "visits" in one month
+    -> 533 TPS (reads, req #3)
+- 168B "page views" in 2018 (one full year duration)
+    -> 4,600 TPS (reads, req #3)
+- 32B upvotes in 2019 (one full year duration)
+    -> 877 TPS (writes, req #2)
+- 199M posts created in 2019 (one full year duration)
+    -> 5.45 TPS (writes, req #1)
+- 2.8M total subreddits
+---
+7,000 TPS (reads, req #3)
+877 TPS (writes, req #2)
+5.45 TPS (writes, req #1)
+
+So, this is going to be read heavy
+
+
+- top post stats
+    - 439k upvotes on top post for all-time
+    - 310k upvotes on top post for past year
+    - 150k upvotes on top post for past month
+    - 149k upvotes on top post for past week
+    - 90.5k upvotes on top post for today
+
+So, upvotes come in at an exponential decay
+And, even the most viral of posts for the entire site seem to max out at around 1-2 TPS for upvote rate
+Thus, there's actually low thread contention for upvotes on posts
+
+
+
+Derived secondary numbers:
+- 8.6 "page views" per "visit"
+    - since at least one of those page views is likely to be of the homepage,
+    -> 500 - 850 TPS for the homepage
+
+
+
+
+
+64kB
+"packet of death"
+
+
+
+30,0000 char.s
+
+30kB
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
