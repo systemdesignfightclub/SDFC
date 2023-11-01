@@ -1,0 +1,157 @@
+
+
+
+
+
+
+Sending Batch Promotional Emails
+
+
+
+Resources:
+- Alex Xu book II -> distributed email service
+- Alex Xu book I -> notification service
+  - p. 182: why we can't have exactly once delivery
+  - leads to the following link: https://bravenewgeek.com/you-cannot-have-exactly-once-delivery/
+- maybe Alex Xu book II -> dsitributed message broker
+- FlumeJava whitepaper
+  - link: https://stephenholiday.com/notes/flumejava/
+
+
+1M emails in 10 minutes
+
+
+
+Why 10 minutes?
+- for the convenience of the marketing users
+- for highlighting the impact of your marketing campaign
+
+
+
+
+
+Scenarios:
+- amazon.com that shows product recommendations
+- a magazine telling you to subscribe
+
+
+
+
+- for the convenience of the marketing users
+- a magazine telling you to subscribe
+->
+no pre-compute necessary
+
+
+
+- for highlighting the impact of your marketing campaign
+- amazon.com that shows product recommendations
+->
+you might want to do pre-compute
+
+
+
+
+Functional Requirements:
+- Send a bunch a very high volume of emails, following a template with customizable info
+- Analytics on whether they click the stuff in the email
+- At most once delivery
+
+
+
+
+Non-functional Requirements:
+- At most once delivery
+- the least amount of failed email sends as possible
+- high availability
+
+
+
+
+
+Numbers:
+1M emails to send
+send them all in under 10 minutes
+50kB per email
+
+
+
+How many emails per second?
+1M / 10 * 60
+1,000,000 / 600
+1,000,000 / 500
+10,000 / 5 = 2,000 emails per second
+
+2,000 emails per second (TPS)
+
+
+
+
+
+
+What's the bandwidth?
+2,000 emails per second
+50kB per email
+
+2000 * 50 kB / second
+20,000 * 5
+100,000 kB / second
+100 MB / second
+0.1 GB per second
+0.8 Gb per second
+
+1.0 Gb per second is reasonable for one machine's bandwidth on its internet connection
+
+
+
+
+
+
+
+
+2000 requests per second
+16 cores to a CPU
+
+2000 / 16
+500 / 4
+
+125 request per second for each core
+100 TPS per core
+
+100ms for 100 requests
+
+
+**each request can only occupy a core for 10ms**
+SO, we're CPU/"core" bound
+
+
+
+
+
+120
+if we have 64 cores,
+30 requests per second for each core
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

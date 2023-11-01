@@ -1,0 +1,216 @@
+
+
+
+
+
+
+DISTRIBUTED TRACING
+
+
+
+RESOURCES:
+- similar problems:
+    - metrics monitoring service (Alex Xu Volume II) -- actually calls out tracing as "out of scope"
+    - Ad click aggregator (Alex Xu Volume II)
+- what Google did ("Dapper"):
+    - Dapper whitepaper: https://storage.googleapis.com/pub-tools-public-publication-data/pdf/36356.pdf
+    - *heavy* influence on the other distributed tracing systems
+- what Twitter did ("Zipkin"):
+    - https://zipkin.io/
+- what Uber did ("Jaeger"):
+    - InfoQ video: https://youtu.be/EW9GjQNcyzI
+    - InfoQ transcript: https://www.infoq.com/presentations/uber-microservices-distributed-tracing/
+    - https://www.jaegertracing.io/
+    - https://eng.uber.com/distributed-tracing/
+    - One engineer went on to write a whole book about it: https://www.shkuro.com/books/2019-mastering-distributed-tracing/
+- what Netflix did:
+    - https://netflixtechblog.com/building-netflixs-distributed-tracing-infrastructure-bb856c319304
+    - InfoQ video: https://youtu.be/DlWYNoLmma8
+- other stuff:
+    - https://medium.com/knerd/distributed-tracing-design-and-architecture-88b1ce31f60d
+    - https://lightstep.com/distributed-tracing
+    - "OpenTracing": https://opentracing.io/
+    - "OpenTelemetry", another thing from CNCF: https://opentelemetry.io/
+- Other proprietary products:
+    - Amazon X-ray
+    - Google Cloud Trace
+
+
+
+REQUIREMENTS:
+- we want to build a DAG of the calls, called a "trace"
+- each call is captured as a "span"
+- start and end timestamps
+- view the trace through a web interface
+
+- non-obtrusive to regular query handling
+- a few minutes of data stale-ness on the reads is absolutely tolerable
+- "down-sampling" is permitted (0.1%, 1 in 1000, by default)
+- supports an internal tracing service, not an externally facing observability product, but running at google / "big tech" scale
+
+- supports 1000 services
+- 100 machines per service on average
+- 100 QPS on avg for each machine
+- data retention for 1 year
+- 0.1% sampling rate (1 in 1000)
+- no more than 1000 analytical queries per hour from the engineers
+
+
+OUT OF SCOPE:
+- metrics
+- in-depth logging (usually something like an ELK stack)
+
+
+
+CALL OUTS:
+- data store choice
+- can a popular downstream internal service still get flooded even with down-sampling?
+- pull or push for the collector service?
+- why sampling decision is made at root
+- how do DB and message broker traces work?
+- machine count estimate
+
+
+NUMBERS:
+- supports 1000 services
+- 100 machines per service on average
+- 100 QPS on avg for each machine
+- 0.1% sampling rate
+- no more than 1000 analytical queries per hour from the engineers
+
+
+
+
+
+
+
+
+how many writes per second?
+how many QPS on avg. per service? (is this a reasonable amount?)
+
+1000 services * 100 machines * 100 queries -> queries per second (total)
+1k * 10k -> 10M
+
+
+multiply by the (1 in 1000)
+10k traces sampled per second
+
+
+
+
+
+how much storage?
+how much data in a year?
+10k traces per second
+
+
+how may traces per day?
+10k * 100k -> 1B traces per day
+1B spans per day
+
+how many traces per year?
+1B * 365 -> 365B
+365B spans per year
+
+
+how big are the spans?
+5kB
+
+
+
+start timestamp - 4 bytes
+end timestamp - 4 bytes
+small other metadata - maybe 6 ints -> 24 bytes
+  spansId
+  parentSpanId
+
+100 bytes
+0.1kB
+
+requestblob
+responseblob
+1000 chars
+1kB for request
+1kB for response
+
+
++2kB
+
+
+a couple logs - 10-20 logs of 100-200 char.s each
+10*100
+20*200 -> 4kB
+
+
+
+6.1kB
+
+
+
+
+
+how much space would these spans take up in a year?
+5kB per span
+365B spans per year -> 300B
+
+1500 kB * 1B
+1500B kB
+1.5B MB
+1.5M GB
+1.5k TB
+1.5PB
+
+
+1500TB
+100TB per harddisk
+
+15 harddisks
+30 HDDs if you do 2X replication
+45 HDDs if you do 3X replication
+
+
+
+
+
+
+
+how many reads per second?
+
+no more than 1000 analytical queries per hour from the engineers -> round to 1200
+60 minutes
+
+1200 / 60 -> queries per minute
+20 queries per minute
+
+no more than 1 query per second for the engineers' analytical queries
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
