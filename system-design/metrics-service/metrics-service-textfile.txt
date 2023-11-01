@@ -1,0 +1,267 @@
+
+
+
+METRICS MONITORING AND ALARMS SERVICE
+
+
+
+RESOURCES
+- Alex Xu Volume II
+- Pinterest's metrics service, with custom DB named "Goku" - https://medium.com/pinterest-engineering/goku-building-a-scalable-and-high-performant-time-series-database-system-a8ff5758a181
+- Similar problems:
+    - ad click aggregator -- Alex Xu Volume II
+    - frequent items -- Stanley Chiang
+
+
+
+
+REQUIREMENTS
+- it's the stuff that makes your pager work (if you've ever owned one of those)
+- Pinterest has a metrics service that handles over 1 billion data points per minute
+- collect metrics on your prod services -- cpu, memory, disk
+- show data on the metrics in real-time
+- page the on-call engineer when certain rules about the metrics are met
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CHECKLIST:
+- [ ] load balancers
+- [ ] CDNs?
+- [ ] secondary indices?
+- [ ] DB schemas
+- [ ] partitioning keys, secondary indices
+- [ ] NALSD numbers (return to this at end)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--------------------
+LIVE DISCUSSION QUESTIONS:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+pls add requirement to show top 5 metrics in real time say cpu,disk, memory this was asked to me
+
+
+
+
+
+
+
+What is the role of Kafka vs Flink in this case? Is one a message queue and Flink more for the analytics side?
+
+
+
+With push, we can put a load balancer and have metrics send through the load balancer. But with a pull-only model, the metrics are collected directly by metric collection service
+
+
+
+We’ll have to shard the metrics deliberately when pulling and deploy backup instances explicitly to support replication and failover. 
+
+
+
+
+
+what would be the kafka topics?
+
+
+
+
+what are high cardinality queries?
+that's from the pinterest blog you had up
+
+
+
+
+Can you go over sequentially how the metrics process works? I think the arrows are confusing me a little.
+
+
+
+
+
+what's the purpose of having Flink/Firehose in between Kafka/message broker and the metrics data store?
+
+
+
+couldn't we just go from Kafka -> task runners -> metrics data store
+
+then query from the metrics data store
+
+
+
+
+
+what would be partioning strategy in kafka
+
+
+
+High Cardinality - Data (column) that has many possible values. something like userId, shoppingcartId or orderids
+
+
+
+
+For top K would it be map reduce with windowing or count min sketch ?
+
+
+
+
+Do we need a metrics collection service? Shouldn't backend deamons in the respective services push to Kafka topic/topics? 
+
+
+
+
+
+
+why use log-based message broker over in-memory?
+log-based message broker = kafka
+in-memory = RabbitMQ
+
+
+
+
+
+
+Ad click by Alex Xu used map reduce with small aggregation window
+
+
+
+
+
+From alarm service to pager, should it be a synchronous call instead of an async call?
+
+sync call
+Pros:
+- lower latency
+Cons:
+- no de-duplication
+- partial failure scenarios a bit messier
+
+
+
+
+
+couldn't we just go from Kafka -> task runners -> metrics data store
+
+then query from the metrics data store
+
+
+
+
+
+
+What is the purpose of a task runner?
+- distributed cron
+- "lambda triggers", for pulling off of a stream
+Also can you briefly go over how push vs pull works in this question and why push is better?
+
+push
+- prod service has the retry logic
+- needs metrics daemon
+- who gets paged? -- the prod service owners
+
+pull
+- metric collection service has the retry logic
+- who gets paged? -- the metrics service
+
+who gets paged if the logs aren't getting properly passed?
+there's a little overhead with owning the retry logic
+
+
+
+
+1B events/minute ~= 16.7M events/second
+
+1B events/day ~= 12k events/second
+
+things to consider for map-reduce versus streamng services ^
+
+
+
+
+
+It's possible that you may want to send metrics to more than one single destination. Metrics collection service can fan that out too
+
+
+
+We did not want to connect our daemons directly to Kafka since we can have huge no of pods running which scales in and out as required, and creating so many connections to Kafka can become a problem 
+
+
+
+Can metrics store be a time series db
+Yes.
+OpenTSDB -- Open Time Series DB
+
+
+
+
+just wondering, if Pinterest is getting 1B events per seond, do you have any idea what kind of traffic something like Google or Facebook might be getting per minute? 17M events per second is alread crazy, idk how to manage even more
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

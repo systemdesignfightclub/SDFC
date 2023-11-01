@@ -1,0 +1,194 @@
+
+
+
+CAPTCHA
+
+
+
+RESOURCES
+- None. We're having fun tonight.
+
+
+
+
+
+
+
+
+
+
+REQUIREMENTS
+- tag new images with labels
+- verify that users are human
+
+
+
+
+
+
+
+
+
+
+
+
+
+CHECKLIST:
+- [ ] load balancers
+- [ ] CDNs?
+- [ ] secondary indices?
+- [ ] DB schemas
+- [ ] partitioning keys, secondary indices
+- [ ] NALSD numbers (return to this at end)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--------------------
+LIVE DISCUSSION QUESTIONS:
+
+
+
+
+
+
+
+
+
+
+https://excalidraw.com/#json=DPe9T2mzMe7Bicyyz5lMH,TGSAV1Q1KIvGAos-g3rMNw
+
+
+https://excalidraw.com/#json=CIGAnLrbR9-BWmHhaHNpz,9756HaAvJSbzwBdQRVSpZg
+
+
+
+
+
+
+https://excalidraw.com/#json=WxtJC2JBpAmUMG4AvqFDo,6Y5sQzD72ZrJcM4-NYTHaA
+
+
+
+
+
+
+Do you post all the live streams after they are done?
+
+
+
+
+
+
+
+
+Thanks! How do we also make a request on the topic?
+
+
+
+
+
+
+Hi can you pls explain how will it help making uuid as the sort key?
+Should it not be the image_url instead? Pls correct me...
+
+
+
+
+
+
+
+this would be something like a natural key: https://en.wikipedia.org/wiki/Natural_key
+^ using athe url as the key instead of the UUID
+
+
+
+
+why aren't you supposed to do a GROUP BY on an OLTP data store?
+"huge key-range queries" = "OLAP stuff"
+
+DDIA has great content on the bottleneck differences of OLTP vs OLAP
+OLAP - the bottleneck is HDD scans / disk scans
+OLTP - machine I/O
+
+
+
+
+
+
+How do we ensure the correctness of user tagged labels?
+
+
+{freeTaggingLabor}  {verificationWord}
+ANY_WORD     pbebsta
+
+skew
+
+
+
+
+
+
+
+
+
+some websites increase the number of captchas you need to answer before they let you proceed if you keep getting the tags wrong 😂
+
+
+
+Sorry I think I missed the first 20 minutes of the zoom. What is the point of designating OLTP vs OLAP data stores. Also with the key isBus - how are we getting that a particular captcha is testing for bus?
+
+
+OLTP - DynamoDB, Cassandra, Spanner, PostgreSQL, ElasticSearch
+single record look-ups, or very small key-range queries
+
+OLAP - RedShift, ClickHouse, Snowflake, Druid, Trino
+optimized for huge full table scans
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

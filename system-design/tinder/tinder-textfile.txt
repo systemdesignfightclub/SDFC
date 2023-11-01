@@ -1,0 +1,183 @@
+
+
+
+TINDER
+
+
+
+RESOURCES:
+- none, but it seems like a few others have done some coverage on this problem
+
+
+
+
+REQUIREMENTS:
+- recommend other accounts to the user
+- user swipes left or right to indicate whether they "like" the displayed account
+- if two users "like" each other, it's a "match"
+- send notification when a "match" occurs
+
+OUT-OF-SCOPE:
+- chat app aspect
+
+
+
+
+
+
+
+
+any tips for getting matches in tinder?
+don't use tinder
+
+
+
+
+QQ -: How do you define a ”match”, thus “like”?  Is it on basis of some “similarity” defined on the user’s metadata? Ty;
+
+match:
+the users "right swipe" on each other's profiles
+
+recommendation:
+IDF-TF
+
+
+
+
+
+I'm pretty sure it also asks you what kind of person you're interested in, and it can recommend people based on those meta tags
+
+filtering:
+age bounding (e.g. 18-25, 35-45)
+
+How long is a match request valid?
+permanent/forever
+
+
+
+
+Can users see a history of their matches as a list? Or is it just a one-time notification?
+
+the matches list is kind of a "chat app" where all your contacts are your matches
+
+
+
+
+Why is swipe match a separate table? Can add a field in user table that contains a link to the list-of-all-matches of that user. This avoids dupes
+
+looking up the matches would be very innefficient if you store the list of hundreds of matches directly on the user table
+
+
+
+
+We can use something like a siamese neural network which can generate the similarity between two given profiles and we can pre-cache those at some cadence
+
+
+Possible extra requirement: already swiped profiles should not be recommended.
+- age filtering
+- location filtering
+
+
+
+
+We can use Bloom filter for this? Ty;
+not relevant here
+
+
+
+
+I believe location plays an imp factor here. So if I change my location on the fly, I can get more matches based on location.
+-> that's why location can be inlined into the recommendations table
+
+
+
+Recommendation could be an Hourly Job based on each location to match all users for a certain location. 
+
+
+
+U need a cache
+U need a LoadBalancer
+What type of sharding?
+
+
+
+
+
+why is consistent hashing a bad idea for lists? is it because consistent hashing makes sequential access more difficult?
+it's a bad idea for key-range queries -> "A common mistake with choosing partitioning keys"
+
+
+
+
+WRT sort key, why we shouldn’t use date?
+it has to be uniquely identifying
+
+
+
+
+We will have some TTL on the recs (preds)
+redis has that :)
+
+
+
+We’ll be fetching the top-k records maybe for a user_id
+
+
+redis has spatial indexing
+
+
+
+
+
+How would u add notification for match and messages?
+
+
+
+
+
+Can we explore the redis schema in more detail?
+Redis has sorted sets, so a fetch would be super easy?
+
+
+
+
+
+
+
+Does DB trigger affect write performance on the DB? Users are expected make a lot of swipes, will the swipe/match DB be able to handle both (recording all swipes AND the triggers)?
+-> DB triggers are definitely higher "overhead"
+Do cassandra without a DB trigger approach
+
+
+
+Scaling notifications could be itself a big topic to discuss, just like YT introduced the bell icon to reduce the load. (Not a question) But if we keep on sending notifications, our users will be overwhelmed, so need some check there and send only best matches.
+
+
+
+
+
+
+
+Some good reads -: https://www.eugenewei.com/blog/2020/8/3/tiktok-and-the-sorting-hat, https://www.eugenewei.com/blog/tag/machinelearning, https://arxiv.org/pdf/2209.07663.pdf (monolith)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
