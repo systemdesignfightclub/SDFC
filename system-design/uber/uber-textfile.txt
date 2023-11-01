@@ -1,0 +1,158 @@
+
+
+
+
+UBER BACKEND
+
+
+
+
+RESOURCES:
+- Alex Xu Volume II - "Nearby Friends"
+- Alex Xu Volume II - "Proximity Service"
+- Grokking - "Uber backend"
+- Alex Xu Volume II - "Payment Service" (How stripe works)
+
+
+EXAMPLES:
+- Uber
+- Lyft
+- Food ordering apps are probably also somewhat relevant
+
+
+REQUIREMENTS:
+- riders can see nearby drivers
+- drivers give location updates
+- riders can order a ride from a nearby driver
+
+
+
+OUT OF SCOPE:
+- post-order ride handling beyond the initial order placement for a ride
+
+
+
+
+NUMBERS:
+- 10M daily rides
+(100 TPS)
+
+concurrent * 60
+6000 concurrent riders
+
+
+
+
+
+100 TPS - writes
+
+
+
+1:3 for drivers to riders
+400TPS for driver location writes
+
+
+
+~6000 TPS for reads
+1200 TPS - reads
+
+
+
+
+
+They mention they got 170k QPS
+
+
+
+
+
+
+
+
+
+quad-tree
+r-tee
+geohash
+
+
+
+
+
+ElasticSearch - quadtree
+redis - geohash
+
+
+
+
+
+geolocation "cell" -> redis pub/sub channel
+
+
+
+
+DB schemas
+DB tech choices
+Order service API call steps
+
+
+
+matching
+
+
+
+"coordination avoidance"
+-> sagas
+
+
+
+
+AWS Steps - "Workflow"
+ASL
+
+
+Netflix Conductor
+
+
+
+
+
+
+
+Why orchestration?
+
+You might have retries
+having so many calls is likely to be very latent
+
+
+
+
+
+
+What is production ready?
+
+1) is it scalable?
+2) is it highly available?
+
+
+
+Is prostgreSQL going to scale for us?
+How can we improve the availability of this system?
+What happens when xyz service is down?
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
