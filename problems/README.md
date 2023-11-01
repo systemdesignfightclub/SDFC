@@ -53,6 +53,11 @@
 | <img src="hotel-booking/hotel-booking-thumbnail.png" height="100"> | [Hotel Booking](hotel-booking) |
 | <img src="web-crawler/web-crawler-thumbnail.png" height="100"> | [Web Crawler](web-crawler) |
 | <img src="ad-click-counter/ad-click-counter-thumbnail.png" height="100"> | [Ad Click Counter](ad-click-counter) |
+| <img src="distributed-tracing/distributed-tracing-thumbnail.png" height="100"> | [Distributed Tracing](distributed-tracing) |
+| <img src="inventory/inventory-thumbnail.png" height="100"> | [Inventory](inventory) |
+| <img src="batch-emails/batch-emails-thumbnail.png" height="100"> | [Batch Emails](batch-emails) |
+| <img src="youtube/youtube-thumbnail.png" height="100"> | [Youtube](youtube) |
+| <img src="proximity-service/proximity-service-thumbnail.png" height="100"> | [Proximity Service](proximity-service) |
 
 
 
