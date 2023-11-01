@@ -1,6 +1,13 @@
 
 | Thumbnail | Topic |
 | ------------- | ------------- |
+| <img src="craigslist/craigslist-thumbnail.png" height="100"> | [Craigslist](craigslist) |
+| <img src="twitter/twitter-thumbnail.png" height="100"> | [Twitter](twitter) |
+| <img src="nested-comments/nested-comments-thumbnail.png" height="100"> | [Nested Comments](nested-comments) |
+| <img src="scheduled-digital-transaction/scheduled-digital-transaction-thumbnail.png" height="100"> | [Scheduled Digital Transaction](scheduled-digital-transaction) |
+| <img src="hparam-training/hparam-training-thumbnail.png" height="100"> | [HParam Training](hparam-training) |
+| <img src="audience-segmentation/audience-segmentation-thumbnail.png" height="100"> | [Audience Segmentation](audience-segmentation) |
+| <img src="otp-with-cache/otp-with-cache-thumbnail.png" height="100"> | [OTP with Cache](otp-with-cache) |
 | <img src="dropbox/dropbox-thumbnail.png" height="100"> | [Dropbox](dropbox) |
 | <img src="photo-sharing-service/photo-sharing-service-thumbnail.png" height="100"> | [Photo Sharing Service](photo-sharing-service)  |
 | <img src="health-check-endpoint/health-check-endpoint-thumbnail.png" height="100"> | [Health Check Endpoint](health-check-endpoint) |
